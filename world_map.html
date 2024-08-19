@@ -1,196 +1,159 @@
 <!DOCTYPE html>
-<html lang="en">
+<html>
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Anurag Gupta | Cornell University | Indian Institute of Technology Bombay</title>
-    <style>
-        body {
-            display: flex;
-            font-family: Arial;
-            margin: 20px;
-            background-color: #eee;
-            /* padding: 20px; */
-            /* box-shadow: 0 0 10px rgba(0,0,0,0.1); */
-            line-height: 40px;
-            font-size: 20px;
-        }
-        .toc {
-            position: fixed;
-            width: 240px;
-            height: calc(100vh - 60px);
-            overflow-y: auto;
-            padding: 10px;
-            background-color: #fff;
-            border-right: 1px solid #ccc;
-            box-shadow: 2px 0 5px rgba(0,0,0,0.1);
-        }
-        .toc a {
-            display: block;
-            padding: 5px;
-            text-decoration: none;
-            color: #000;
-        }
-        .toc a.active {
-            background-color: #ddd;
-        }
-        .content {
-            margin-left: 270px;
-            padding: 20px;
-            background-color: #fff;
-            flex-grow: 1;
-            box-shadow: 5px 0 5px rgba(0,0,0,0.1);
-        }
-        .bottom-content {
-            display: flex;
-            flex-wrap: wrap;
-            gap: 10px;
-            margin-top: 20px;
-        }
-        .bottom-content > div {
-            flex: 1;
-            min-width: 300px;
-            padding: 10px;
-            margin: 5px 0;
-            /* box-shadow: 0 0 5px rgba(0,0,0,0.1); */
-        }
-        @media screen and (max-width: 768px) {
-            .toc {
-                display: none;
-            }
-            .content {
-                margin-left: 0;
-            }
-        }
-        figure, figcaption, h1
-        {
-          text-align: center;
-          /* align-items: center; */
-        }
-        h1, h2
-        {
-          margin: 20px 0;
-        }
-        hr
-        {
-          border-color: black;
-        }
-        a
-        {
-          text-decoration: none;
-          color: #259;
-        }
-        .table-style-1 tr td:first-child
-        {
-          font-weight: bold;
-        }
-        br
-        {
-          display: block;
-          content: "";
-          margin: 0.6em;
-        }
-        tr td
-        {
-          padding-right:10px;
-          vertical-align: top;
-        }
-        tr td:last-child
-        {
-          padding-right: 0px;
-        }
-        .logo
-        {
-          /* display: inline; */
-          /* display: inline-flex; */
-          max-width: 120px;
-          /* border: 1px solid black; */
-          /* float: right; */
-          margin: 0 20px;
-        }
-        canvas {
-           border: 1px solid black;
-           position: relative;
-       }
-       #tooltip {
-           position: absolute;
-           background-color: rgba(0, 0, 0, 0.7);
-           color: white;
-           padding: 5px;
-           border-radius: 3px;
-           pointer-events: none;
-           display: none;
-       }
-    </style>
+  <title>World Visa</title>
+<meta charset="utf-8">
+<meta name="HandheldFriendly" content="True">
+<meta name="MobileOptimized" content="320">
+<meta name="viewport" content="initial-scale=1.0, minimum-scale=1.0, maximum-scale=1.0, user-scalable=no">
+<link href="http://fonts.googleapis.com/css?family=Raleway:700,300" rel="stylesheet"
+        type="text/css">
+<link rel="icon" href="images/in2eco-logo.png">
+<link rel="stylesheet" href="assets/css/style.css">
+<link rel="stylesheet" href="assets/css/prettify.css">
+<link rel="stylesheet" href="https://unpkg.com/leaflet/dist/leaflet.css" />
+<script src='https://kit.fontawesome.com/a076d05399.js' crossorigin='anonymous'></script>
+<script src="https://unpkg.com/leaflet/dist/leaflet.js"></script>
+<style>
+header , .pull-right a , .docs-nav a:hover, .docs-nav .active, span.sub_heading {background:#333;}
+a,nav a:active,a:active{color:#333;}
+</style>
+<style>
+figure
+{
+  text-align:center;
+  /* float:right; */
+}
+</style>
+<style>
+  .map {
+    height: 300px;
+    width: 100%;
+    border-radius: 10px;
+  }
+  #map-overall
+  {
+    height: 350px;
+  }
+</style>
+<style>
+    .slide-container {
+        position: relative;
+        max-width: 600px;
+        margin: auto;
+        margin-bottom: 20px;
+    }
+    .slides {
+        display: none;
+        width: 100%;
+    }
+    .thumbnails {
+        display: flex;
+        justify-content: center;
+        margin-top: 10px;
+    }
+    .thumbnail {
+        cursor: pointer;
+        width: 60px;
+        margin: 0 5px;
+    }
+    .left, .right {
+        cursor: pointer;
+        position: absolute;
+        top: 50%;
+        width: auto;
+        padding: 16px;
+        color: white;
+        font-weight: bold;
+        font-size: 18px;
+        user-select: none;
+        transition: 0.6s ease;
+    }
+    .left {
+        left: 0;
+    }
+    .right {
+        right: 0;
+    }
+    .left:hover, .right:hover {
+        background-color: rgba(0,0,0,0.8);
+    }
+    .email
+    {
+      max-width: 600px;
+      border: 1px dotted black;
+      border-radius: 0px;
+    }
+    canvas {
+       border: 1px solid black;
+       position: relative;
+   }
+    #tooltip {
+        position: absolute;
+        background-color: rgba(0, 0, 0, 0.7);
+        color: white;
+        padding: 5px;
+        border-radius: 3px;
+        pointer-events: none;
+        display: none;
+    }
+</style>
 </head>
 <body>
-    <nav class="toc">
-        <a href="#objective" class="toc-link">Home</a>
-        <a href="#qualification" class="toc-link">Qualification</a>
-        <a href="#experience" class="toc-link">Experience</a>
-        <a href="#hobby" class="toc-link">Hobby</a>
-        <a href="#contact" class="toc-link">Contact</a>
-    </nav>
-    <div class="content">
-      <canvas id="worldMap" width="800" height="400"></canvas>
-      <div id="tooltip"></div>
-      <hr>
-      <div id="contact" class="bottom-content">
-          <div>
-            <p>
-              <h2><a href="https://calendar.google.com/calendar/u/0/appointments/schedules/AcZssZ1rkQF3DqO1U4zFL-xGdc_sYeYteCyZ-KvIkCTqaYemyfC0rJMcTzgBEb27a6k9gDN7O1W6k55e">Schedule a meeting</a></h2>
-              If you want to talk with me, use the link above to schedule a call.
-            </p>
-          </div>
-          <div>
-            <p>
-              <!-- <h3>Contact</h3> -->
-              <table class="table-style-1">
-                <!-- <tr>
-                  <td>Location</td>
-                  <td>Ithaca, New York</td>
-                </tr> -->
-                <tr>
-                	<td>Email ID</td>
-                  <td><img width="240em" src="images/email.jpg"></img></td>
-                </tr>
-                <tr>
-                	<td>Homepage</td>
-                  <td><a href = "http://www.anuragg.in">http://www.anuragg.in</a></td>
-                </tr>
-              </table>
-            </p>
-          </div>
-      </div>
-    </div>
-    <script src="https://d3js.org/d3.v6.min.js"></script>
-    <script src="https://d3js.org/topojson.v1.min.js"></script>
-    <script src="worldMap.js"></script>
-    <script>
-        document.addEventListener("DOMContentLoaded", function () {
-            const tocLinks = document.querySelectorAll(".toc a");
-            const sections = document.querySelectorAll(".content h2");
+<div class="wrapper">
+<section>
+  <div class="container">
+    <ul class="docs-nav">
+      <li><strong><a href="index.html">Home</a></strong></li>
+      <li><a href="#overview">World Map</a></li>
 
-            window.addEventListener("scroll", () => {
+      <!-- <li><a href="#biometric">Biometric Enrollment</a></li> -->
+      <!-- <li class="separator"></li>
+      <li><strong>Customization</strong></li>
+      <li><a href="#Top">Top Area</a></li>
+	  <li><a href="#header">Header</a></li>
+      <li><a href="#label-post">About</a></li>
+      <li><a href="#footer">Sections</a></li>
+      <li><a href="#settings">Settings</a></li> -->
+    </ul>
+    <div class="docs-content">
+      <h2 class="entry-title"> Visa Information for Indian Citizens</h2>
 
-                sections.forEach((section) => {
-                    const sectionTop = section.offsetTop;
-                    if (pageYOffset >= sectionTop - 60) {
-                        current = section.getAttribute("id");
-                    }
-                });
+  <!-- ************************ SECTION: OVERVIEW ************************ -->
+  <!-- <h3 id="overview">World Map</h3> -->
+  <canvas id="worldMap" width="800" height="400"></canvas>
+  <div id="tooltip"></div>
+</div>
+</section>
+</div>
+<script src="https://d3js.org/d3.v6.min.js"></script>
+<script src="https://d3js.org/topojson.v1.min.js"></script>
+<script src="worldMap.js"></script>
+<script>
+    document.addEventListener("DOMContentLoaded", function () {
+        const tocLinks = document.querySelectorAll(".toc a");
+        const sections = document.querySelectorAll(".content h2");
 
-                tocLinks.forEach((link) => {
-                    link.classList.remove("active");
-                    if (link.getAttribute("href").substring(1) === current) {
-                        link.classList.add("active");
-                    }
-                });
+        window.addEventListener("scroll", () => {
+
+            sections.forEach((section) => {
+                const sectionTop = section.offsetTop;
+                if (pageYOffset >= sectionTop - 60) {
+                    current = section.getAttribute("id");
+                }
             });
 
-            // Highlight the first link when the page loads
-            tocLinks[0].classList.add("active");
+            tocLinks.forEach((link) => {
+                link.classList.remove("active");
+                if (link.getAttribute("href").substring(1) === current) {
+                    link.classList.add("active");
+                }
+            });
         });
-    </script>
+
+        // Highlight the first link when the page loads
+        tocLinks[0].classList.add("active");
+    });
+</script>
 </body>
 </html>
