@@ -6,6 +6,17 @@ body, html {
     margin: 0;
     padding: 0;
 }
+figure
+{
+  text-align:center;
+  /* float:right; */
+}
+.email-screenshot
+{
+  max-width: 600px;
+  border: 1px dotted black;
+  border-radius: 0px;
+}
 
 body,
 input,
@@ -369,7 +380,7 @@ nav #menu-toggle {
 
 
 /* Content Styles */
-section { padding: 1em 0.5em 3em; text-align: left; }
+section { padding: 1em 0.5em 3em; text-align: left; background-color: white;}
 section.vibrant { background: #222; color: #fff; }
 section.vibrant h4{
   line-height: 2;
@@ -476,6 +487,7 @@ input:focus {
   {
     display:none;
   }
+  .wrapper { margin:20px 20px ;}
 }
 @media only screen and (min-width: 600px) {
 
