@@ -1,22 +1,30 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Web Component Example</title>
 </head>
 <body>
+    <form action="login.php" method="post">
+        <label for="username">Username:</label>
+        <input type="text" id="username" name="username" required>
+        <br>
+        <label for="password">Password:</label>
+        <input type="password" id="password" name="password" required>
+        <br>
+        <button type="submit">Login</button>
+    </form>
+    <!-- <script>
+          fetch('header.html')
+              .then(response => response.text())
+              .then(data => {
+                  const tempDiv = document.createElement('div');
+                  tempDiv.innerHTML = data;
 
-    <!-- Use the custom header component -->
-    <header-component></header-component>
-
-    <main>
-        <h2>Welcome to the Main Content</h2>
-        <p>This is where your main content goes.</p>
-    </main>
-
-    <!-- Include the Web Component script -->
-    <script src="header.js"></script>
-
+                  // Append the loaded content to the <head> section
+                  while (tempDiv.firstChild) {
+                      document.head.appendChild(tempDiv.firstChild);
+                  }
+              })
+              .catch(error => console.log('Error loading head content:', error));
+      </script> -->
 </body>
 </html>
