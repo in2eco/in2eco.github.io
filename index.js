@@ -61,7 +61,7 @@ for (let i = 0; i < data.length; i++) {
               <div class="d-flex mb-2">
                   <a class="text-primary text-uppercase text-decoration-none" href="${link}" >${place}</a>
               </div>
-              <a class="h5 m-0 text-decoration-none" href="nepal.html" >${description}</a>
+              <a class="h5 m-0 text-decoration-none" href="${link}" >${description}</a>
           </div>
       </div>
   </div>`;
