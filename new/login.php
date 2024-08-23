@@ -1,22 +1,27 @@
 <?php
-// login.php
-
+ini_set('session.cookie_lifetime', 0);
 session_start();
-$stored_username = 'your_username';
-$stored_password_hash = password_hash('your_password', PASSWORD_DEFAULT);
+
+$stored_username = 'test';
+$stored_password_hash = password_hash('test', PASSWORD_DEFAULT);
 
 if ($_SERVER['REQUEST_METHOD'] == 'POST') {
     $username = $_POST['username'];
     $password = $_POST['password'];
 
     if ($username === $stored_username && password_verify($password, $stored_password_hash)) {
-        // Login successful, set session variables
+        session_regenerate_id(true);
         $_SESSION['loggedin'] = true;
         $_SESSION['username'] = $username;
-        header('Location: dashboard.php');
+        header('Location: dashboard.php?username='.$username);
         exit;
     } else {
-        echo 'Invalid username or password';
+        header('Location: index.php');
+        exit;
     }
+}
+else {
+  header('Location: index.php');
+  exit;
 }
 ?>
