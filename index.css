@@ -131,3 +131,91 @@ figcaption
     margin: 0 0 0 0;
   }
 }
+
+/******************* START: READER COMMENTS **********************/
+/* General styles for the reader-comments div */
+
+
+/* Heading style */
+#reader-comments h3 {
+    /* font-size: 24px; */
+    margin-bottom: 20px;
+    color: #333;
+}
+
+/* Comment form style */
+#new-comment {
+    width: 50%;
+    padding: 10px;
+    margin-bottom: 10px;
+    border-radius: 4px;
+    border: 1px solid #ddd;
+}
+
+#submit-comment {
+    padding: 8px 16px;
+    margin-bottom: 10px;
+    background-color: #007bff;
+    color: white;
+    border: none;
+    border-radius: 4px;
+    cursor: pointer;
+}
+
+#submit-comment:hover {
+    background-color: #0056b3;
+}
+
+/* Comment container */
+.comment {
+    border: 1px solid #ddd;
+    border-radius: 8px;
+    padding: 15px;
+    margin-bottom: 15px;
+    position: relative;
+}
+
+/* Timestamp style */
+.comment .timestamp {
+    font-size: 12px;
+    color: #888;
+    margin-bottom: 10px;
+    display: block;
+}
+
+/* Comment text style */
+.comment .text {
+    font-size: 14px;
+    color: #333;
+}
+
+/* Reply button style */
+.reply-button {
+    margin: 10px 0;
+    padding: 5px 10px;
+    background-color: #007bff;
+    color: white;
+    border: none;
+    border-radius: 4px;
+    cursor: pointer;
+}
+
+.reply-button:hover {
+    background-color: #0056b3;
+}
+
+/* Base Reply style */
+.comment.reply {
+    /* margin-left: 30px; /* Indent reply */ */
+    border-left: 3px solid #ddd;
+    padding-left: 15px;
+}
+
+/* Alternating background colors based on the level of reply */
+.comment.reply.level-even {
+    background-color: #f0f0f0; /* Light grey */
+}
+
+.comment.reply.level-odd {
+    background-color: #e0e0e0; /* Slightly darker grey */
+}
