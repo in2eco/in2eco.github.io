@@ -46,6 +46,27 @@ function getKeywordsFromHtml($filePath) {
     return 'No keywords found';
 }
 
+// Function to extract the description from <meta name="description"> tag
+function getDescriptionFromHtml($filePath) {
+    $content = file_get_contents($filePath);
+    if ($content === false) {
+        return 'Unable to read file';
+    }
+
+    // Use DOMDocument to parse HTML and extract <meta name="keywords"> content
+    $dom = new DOMDocument;
+    @$dom->loadHTML($content);
+    $metaTags = $dom->getElementsByTagName('meta');
+
+    foreach ($metaTags as $metaTag) {
+        if ($metaTag->getAttribute('name') === 'description') {
+            return $metaTag->getAttribute('content');
+        }
+    }
+
+    return 'No description found';
+}
+
 ?>
 
 <!DOCTYPE html>
@@ -79,6 +100,7 @@ function getKeywordsFromHtml($filePath) {
             <th>File Name</th>
             <th>Title</th>
             <th>Keywords</th>
+            <th>Description</th>
         </tr>
     </thead>
     <tbody>
@@ -87,6 +109,7 @@ function getKeywordsFromHtml($filePath) {
                 <td><?php echo htmlspecialchars($file); ?></td>
                 <td><?php echo htmlspecialchars(getTitleFromHtml($directoryPath . $file)); ?></td>
                 <td><?php echo htmlspecialchars(getKeywordsFromHtml($directoryPath . $file)); ?></td>
+                <td><?php echo htmlspecialchars(getDescriptionFromHtml($directoryPath . $file)); ?></td>
             </tr>
         <?php endforeach; ?>
     </tbody>
