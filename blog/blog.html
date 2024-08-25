@@ -1,0 +1,223 @@
+﻿<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8">
+  <link rel="shortcut icon" href="favicon.ico" />
+  <link rel="stylesheet" href="blog.css">
+  <link rel="icon" href="images/in2eco-logo.png">
+  <link rel="stylesheet" href="https://unpkg.com/leaflet/dist/leaflet.css" />
+  <script src="https://unpkg.com/leaflet/dist/leaflet.js"></script>
+</head>
+<body>
+  <div class="wrapper">
+    <ul class="docs-nav">
+    </ul>
+    <div class="docs-content">
+    </div>
+  </div>
+  <script>
+  const galleries = {};
+  function changeSlide(n, galleryId) {
+      showSlides(galleries[galleryId] += n, galleryId);
+  }
+
+  function currentSlide(n, galleryId) {
+      showSlides(galleries[galleryId] = n, galleryId);
+  }
+
+  function showSlides(n, galleryId) {
+      let i;
+      const container = document.getElementById(galleryId);
+      const slides = container.getElementsByClassName("slides");
+      // const thumbnails = container.getElementsByClassName("thumbnail");
+
+      if (!galleries[galleryId]) galleries[galleryId] = 1;
+      if (n > slides.length) galleries[galleryId] = 1;
+      if (n < 1) galleries[galleryId] = slides.length;
+
+      for (i = 0; i < slides.length; i++) {
+          slides[i].style.display = "none";
+      }
+      // for (i = 0; i < thumbnails.length; i++) {
+      //     thumbnails[i].className = thumbnails[i].className.replace(" active", "");
+      // }
+      slides[galleries[galleryId] - 1].style.display = "block";
+      // thumbnails[galleries[galleryId] - 1].className += " active";
+  }
+      // Get the current URL
+    const urlParams = new URLSearchParams(window.location.search);
+
+    // Read the values of the parameters
+    const param1 = urlParams.get('a');
+    // Fetch the content from another HTML file
+    fetch(param1+".html")
+        .then(response => response.text())
+        .then(data => {
+            // Select the first element with the class name 'docs-content'
+            const docsContentDiv = document.querySelector('.docs-content');
+
+            // Check if the div exists
+            if (docsContentDiv) {
+                // Create a new DOM parser
+                const parser = new DOMParser();
+                // Parse the fetched HTML
+                const doc = parser.parseFromString(data, 'text/html');
+
+                //////////////////////// START: HEAD ////////////////////////
+                document.head.innerHTML += doc.head.innerHTML;
+
+                //////////////////////// START: META TAGS ////////////////////////
+
+                const title = document.title;
+                const path = window.location.pathname;
+                // Function to fetch the content of a meta tag with a specific name or property
+                function getMetaTagContent(nameOrProperty) {
+                    const metaTag = document.querySelector(`meta[name="${nameOrProperty}"], meta[property="${nameOrProperty}"]`);
+                    return metaTag ? metaTag.content : null;
+                }
+                // Fetch the description meta tag content
+                const descriptionContent = getMetaTagContent("description");
+
+                // Array of meta tag data
+                const metaTags = [
+                    { name: 'description', content: (descriptionContent ? descriptionContent : title)},
+                    { name: 'author', content: 'Anurag Gupta' },
+                    { name: 'viewport', content: 'width=device-width, initial-scale=1.0' },
+                    { property: 'og:title', content: title},
+                    { property: 'og:type', content: 'article'},
+                    { property: 'og:description', content: (descriptionContent ? descriptionContent : title)},
+                    { property: 'og:url', content: 'in2eco.com'+path},
+                    { property: 'og:url', content: 'images/in2eco-logo.png'},
+                    { property: 'og:site_name', content: '@in2eco'},
+                    { name: 'twitter:card', content: 'summary_large_image' },
+                    { name: 'twitter:image', content: 'images/in2eco-logo.png' },
+                    { name: 'twitter:title', content: title},
+                    { name: 'twitter:description', content: (descriptionContent ? descriptionContent : title)},
+                    { name: 'twitter:site', content: '@in_2_eco' },
+                ];
+                // Function to check if a meta tag with a specific name or property exists
+                function metaTagExists(nameOrProperty, value) {
+                    return document.head.querySelector(`meta[${nameOrProperty}="${value}"]`) !== null;
+                }
+                // Loop over the array and create each meta tag
+                metaTags.forEach(tagData => {
+                    const attr = tagData.name ? 'name' : 'property';
+                    const value = tagData[attr];
+                    if (!metaTagExists(attr, value)) {
+                      // Create a new meta tag
+                      const meta = document.createElement('meta');
+                      meta.setAttribute(attr, value);
+                      meta.content = tagData.content;
+
+                      // Append it to the head
+                      document.head.appendChild(meta);
+                    }
+                });
+
+                //////////////////////// END: HEAD ////////////////////////
+
+
+                // Get the content inside the <body> of the fetched HTML
+                const bodyContent = doc.body.innerHTML;
+                docsContentDiv.innerHTML = bodyContent;
+
+                //////////////////////// START: TABLE OF CONTENT ////////////////////////
+                var list = document.querySelector('.docs-nav');
+                // Create the "Home" list item
+                var homeListItem = document.createElement('li');
+                var homeAnchor = document.createElement('a');
+                homeAnchor.href = 'http://www.in2eco.com';
+                homeAnchor.innerHTML = '<strong>Home</strong>';
+                homeListItem.appendChild(homeAnchor);
+                list.appendChild(homeListItem);
+
+                // Select all h3 tags within the docs-content class
+                var headers = document.querySelectorAll('.docs-content h3');
+                // // Loop through each h3 element and print the title attribute
+                //   headers.forEach(h3 => {
+                //       console.log(h3.getAttribute('title'));
+                //   });
+                function generateIdFromTitle(title) {
+                    return title
+                        .toLowerCase()               // Convert to lowercase
+                        .trim()                      // Remove leading and trailing whitespace
+                        .replace(/[^\w\s-]/g, '')    // Remove all non-word characters (except spaces and hyphens)
+                        .replace(/\s+/g, '-')        // Replace spaces with hyphens
+                        .replace(/-+/g, '-');        // Replace multiple hyphens with a single hyphen
+                }
+                headers.forEach(function(header, index) {
+                    // Get the title attribute of the h3 tag, if available
+                    var title = header.getAttribute('title') || header.textContent;
+                    // Generate a unique ID for the h3 tag if it doesn't already have one
+                    if (!header.id) {
+                        header.id = generateIdFromTitle(title)
+                    }
+
+                    // Create a new list item for the h3 tag
+                    var listItem = document.createElement('li');
+
+                    // Create a new anchor element for the h3 tag
+                    var anchor = document.createElement('a');
+                    anchor.href = '#' + header.id;
+                    anchor.textContent = title;
+
+                    // Append the anchor to the list item
+                    listItem.appendChild(anchor);
+                    list.appendChild(listItem);
+                });
+
+                // PHOTO GALLERY
+                const slideContainers = document.querySelectorAll('.slide-container');
+                // Loop through the selected divs and log their ids
+                slideContainers.forEach(div => {
+                    galleries[div.id]=1;
+                });
+                    const galleryIds = Object.keys(galleries);
+                    for (let id of galleryIds) {
+                      // console.log(id);
+                        showSlides(galleries[id], id);
+                    }
+            } else {
+                // Throw an error if the div is not found
+                throw new Error("Element with class 'docs-content' not found.");
+            }
+
+
+            /****** LOAD ASSOCIATED SCRIPTS (IF ANY)******/
+            // URL of the external script
+        const scriptUrl = param1+'.js';
+        function checkScript(url) {
+            return fetch(url, { method: 'HEAD' })
+                .then(response => {
+                    if (response.ok) {
+                        // File exists
+                        return true;
+                    } else {
+                        // File does not exist
+                        return false;
+                    }
+                })
+                .catch(() => {
+                    // Network error or other issues
+                    return false;
+                });
+        }
+        // Check if the script file is present
+        checkScript(scriptUrl).then(exists => {
+            if (exists) {
+                // Create and add the script tag if the file exists
+                const script = document.createElement('script');
+                script.src = scriptUrl;
+                document.body.appendChild(script);
+            } else {
+                console.error('Script file does not exist.');
+            }
+        });
+        })
+        .catch(error => {
+            // Log the error to the console
+            console.error('Error:', error.message);
+        });
+  </script>
+</body>
+</html>

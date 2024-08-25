@@ -5,8 +5,8 @@ let myDiv = document.getElementById("latest-trips");
 
 // Creating an array of dictionaries (objects)
 let data = [
-    { "month": 8, "year": 2024, "place": "Nepal", "description": "Dang &rarr; Lumbini", "image-source": "images/travel/nepal/tulsipur.jpg", "image-caption": "View point near Tulsipur", "link": "nepal.html"},
-    { "month": 5, "year": 2024, "place": "National Parks and National Monuments, USA", "description": "Death valley &rarr; Zion &rarr; Bryce canyon &rarr; Grand staircase &rarr; Glen canyon &rarr; Horseshoe bend &rarr; Grand canyon &rarr; Yosemite &rarr; Sequoia &rarr; Muir woods &rarr; Yellowstone &rarr; Grand Teton &rarr; Arches &rarr; Canyonlands", "image-source": "images/travel/usa/bryce-canyon.jpg", "image-caption": "Bryce Canyon", "link": "national_parks.html"},
+    { "month": 8, "year": 2024, "place": "Nepal", "description": "Dang &rarr; Lumbini", "image-source": "images/travel/nepal/tulsipur.jpg", "image-caption": "View point near Tulsipur", "link": "blog.html?a=nepal"},
+    { "month": 5, "year": 2024, "place": "National Parks and National Monuments, USA", "description": "Death valley &rarr; Zion &rarr; Bryce canyon &rarr; Grand staircase &rarr; Glen canyon &rarr; Horseshoe bend &rarr; Grand canyon &rarr; Yosemite &rarr; Sequoia &rarr; Muir woods &rarr; Yellowstone &rarr; Grand Teton &rarr; Arches &rarr; Canyonlands", "image-source": "images/travel/usa/bryce-canyon.jpg", "image-caption": "Bryce Canyon", "link": "blog.html?a=national_parks"},
     { "month": 2, "year": 2024, "place": "North America", "description": "Portland, Maine &rarr; Quebec city &rarr; Montreal", "image-source": "images/travel/canada/quebec-1.jpg", "image-caption": "Quebec city", "link": "#"},
     { "month": 10, "year": 2023, "place": "Alberta & British Columbia, Canada", "description": "Calgary &rarr; Banff National Park &rarr; Yoho National Park", "image-source": "images/travel/canada/alberta.jpg", "image-caption": "Banff national park", "link": "#"},
     { "month": 9, "year": 2023, "place": "Vietnam", "description": "Sapa &rarr; Hai Phong &rarr; Cat Ba &rarr; Phu Quoc", "image-source": "images/travel/destination/vietnam.jpg", "image-caption": "Ha Long bay", "link": "#"},
@@ -75,11 +75,11 @@ myDiv = document.getElementById("travel-tips");
 
 // Creating an array of dictionaries (objects)
 data = [
-    {"title" :"USA Tourist/Business Visa", "subtitle" : "Interview-waiver programme" , "image-source" : "images/travel/usa/flag.jpg", "image-caption" : "USA flag", "link": "usa_visa.html"},
-    {"title" :"FTI-TTP", "subtitle" : "Trusted traveler program, India", "image-source" : "images/travel/ttp_logo.png", "image-caption" : "FTI-TTP logo", "link": "ftittp.html"},
-    {"title" :"Visa-Free Travel", "subtitle" : "With first world countries' visa", "image-source" : "images/travel/usa/flag.jpg", "image-caption" : "USA flag", "link": "https://visalist.io/visa/travel/us-visa"},
-    {"title" :"Global Entry", "subtitle": "Trusted traveler program, USA", "image-source" : "images/gep/logo.jpg", "image-caption" : "GEP logo", "link": "gep.html"},
-    {"title" :"Canada Tourist Visa", "subtitle" : "Application timeline", "image-source" : "images/travel/canada/flag.jpg", "image-caption" : "Canada flag", "link": "canada_visa.html"},
+    {"title" :"USA Tourist/Business Visa", "subtitle" : "Interview-waiver" , "image-source" : "images/travel/usa/flag.jpg", "image-caption" : "USA flag", "link": "blog.html?a=usa_visa"},
+    {"title" :"FTI-TTP", "subtitle" : "Trusted traveler program", "image-source" : "images/travel/ttp_logo.png", "image-caption" : "FTI-TTP logo", "link": "blog.html?a=ftittp"},
+    {"title" :"Visa-Free Travel", "subtitle" : "First world countries' visa", "image-source" : "images/travel/usa/flag.jpg", "image-caption" : "USA flag", "link": "https://visalist.io/visa/travel/us-visa"},
+    {"title" :"Global Entry", "subtitle": "Trusted traveler program", "image-source" : "images/gep/logo.jpg", "image-caption" : "GEP logo", "link": "blog.html?a=gep"},
+    {"title" :"Canada Tourist Visa", "subtitle" : "Application timeline", "image-source" : "images/travel/canada/flag.jpg", "image-caption" : "Canada flag", "link": "blog.html?a=canada_visa"},
     {"title" :"Camping", "subtitle": "Checklist", "image-source" : "images/travel/camping.jpg", "image-caption" : "Camping", "link": "#"},
 ];
 
