@@ -68,13 +68,51 @@ for (let i = 0; i < data.length; i++) {
 }
 myDiv.innerHTML = content;
 
+function searchInDataArray(query) {
+  let indices = [];
+
+  content = ``;
+  data.forEach((dict, index) => {
+      // Check if any value in the dictionary contains the query
+      if (Object.values(dict).some(value => value.toString().toLowerCase().includes(query.toLowerCase()))) {
+          indices.push(index);
+          month = numberToMonth(data[index]["month"]);
+          year = data[index]["year"];
+          place = data[index]["place"];
+          description = data[index]["description"];
+          image_source = data[index]["image-source"];
+          image_caption = data[index]["image-caption"];
+          link = data[index]["link"];
+          content = content+`<div class="col-lg-4 col-md-6 mb-4 pb-2">
+              <div class="blog-item" >
+                  <div class="position-relative">
+                      <img class="img-fluid w-100" src="${image_source}" alt="${image_caption}">
+                      <div class="blog-date">
+                          <h6 class="font-weight-bold mb-n1">${month}</h6>
+                          <small class="text-white text-uppercase">${year}</small>
+                      </div>
+                  </div>
+                  <div class="bg-white p-4">
+                      <div class="d-flex mb-2">
+                          <a class="text-primary text-uppercase text-decoration-none" href="${link}" >${place}</a>
+                      </div>
+                      <a class="h5 m-0 text-decoration-none" href="${link}" >${description}</a>
+                  </div>
+              </div>
+          </div>`;
+      }
+  });
+
+  myDiv.innerHTML = content;
+}
+
 ///////////////////// TRAVEL TIPS ///////////////////
 
 // Select the div by its ID
-myDiv = document.getElementById("travel-tips");
+myDiv2 = document.getElementById("travel-tips");
 
 // Creating an array of dictionaries (objects)
-data = [
+data2 = [
     {"title" :"USA Tourist/Business Visa", "subtitle" : "Interview-waiver" , "image-source" : "images/travel/usa/flag.jpg", "image-caption" : "USA flag", "link": "blog.html?a=usa_visa"},
     {"title" :"FTI-TTP", "subtitle" : "Trusted traveler program", "image-source" : "images/travel/ttp_logo.png", "image-caption" : "FTI-TTP logo", "link": "blog.html?a=ftittp"},
     {"title" :"Visa-Free Travel", "subtitle" : "First world countries' visa", "image-source" : "images/travel/usa/flag.jpg", "image-caption" : "USA flag", "link": "https://visalist.io/visa/travel/us-visa"},
@@ -85,12 +123,12 @@ data = [
 
 // Using a for loop to iterate through the array
 content = ``;
-for (let i = 0; i < data.length; i++) {
-  let title = data[i]["title"];
-  let subtitle = data[i]["subtitle"];
-  let image_source = data[i]["image-source"];
-  let image_caption = data[i]["image-caption"];
-  let link = data[i]["link"];
+for (let i = 0; i < data2.length; i++) {
+  let title = data2[i]["title"];
+  let subtitle = data2[i]["subtitle"];
+  let image_source = data2[i]["image-source"];
+  let image_caption = data2[i]["image-caption"];
+  let link = data2[i]["link"];
   content = content+`<div class="col-lg-4 col-md-6 mb-4">
                   <div class="destination-item position-relative overflow-hidden mb-2">
                       <img class="img-fluid" src="${image_source}" alt="${image_caption}">
@@ -101,4 +139,32 @@ for (let i = 0; i < data.length; i++) {
                   </div>
               </div>`;
 }
-myDiv.innerHTML = content;
+myDiv2.innerHTML = content;
+
+function searchInDataArray2(query) {
+  let indices = [];
+
+  content = ``;
+  data2.forEach((dict, index) => {
+      // Check if any value in the dictionary contains the query
+      if (Object.values(dict).some(value => value.toString().toLowerCase().includes(query.toLowerCase()))) {
+          indices.push(index);
+          title = data2[index]["title"];
+          subtitle = data2[index]["subtitle"];
+          image_source = data2[index]["image-source"];
+          image_caption = data2[index]["image-caption"];
+          link = data2[index]["link"];
+          content = content+`<div class="col-lg-4 col-md-6 mb-4">
+                          <div class="destination-item position-relative overflow-hidden mb-2">
+                              <img class="img-fluid" src="${image_source}" alt="${image_caption}">
+                              <a class="destination-overlay text-white text-decoration-none" href="${link}">
+                                  <h5 class="text-white">${title}</h5>
+                                  <span>${subtitle}</span>
+                              </a>
+                          </div>
+                      </div>`;
+      }
+  });
+
+  myDiv2.innerHTML = content;
+}
