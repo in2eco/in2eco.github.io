@@ -13,6 +13,7 @@
     <ul class="docs-nav">
     </ul>
     <div class="docs-content">
+      <!-- <div id="map-overall"></div> -->
     </div>
   </div>
   <script>
@@ -115,7 +116,7 @@
                 //////////////////////// START: BODY ////////////////////////
                 // Get the content inside the <body> of the fetched HTML
                 const bodyContent = doc.body.innerHTML;
-                docsContentDiv.innerHTML = bodyContent;
+                docsContentDiv.innerHTML += bodyContent;
                 var div = document.createElement('div');
                 // Set the id attribute of the div
                 div.id = 'author-details';
@@ -179,7 +180,7 @@
                 // Create the "Home" list item
                 var homeListItem = document.createElement('li');
                 var homeAnchor = document.createElement('a');
-                homeAnchor.href = 'index';
+                homeAnchor.href = 'index.html';
                 homeAnchor.innerHTML = '<strong>Home</strong>';
                 homeListItem.appendChild(homeAnchor);
                 list.appendChild(homeListItem);
@@ -374,11 +375,127 @@
           }
           // Example usage
           loadJavaScriptIfExists('blog/'+param1+'.js');
+
+          // Select all elements with the attribute data-location-map-link
+          const elements = document.querySelectorAll('[data-location-map-link]');
+          // console.log(elements);
+          // Loop through each element and prepend a link with an image at the start
+          elements.forEach((element) => {
+              // Create a new link element
+              const link = document.createElement('a');
+              link.href = element.getAttribute('data-location-map-link'); // Use the data attribute value as the link URL
+
+              // Create the image element
+              const img = document.createElement('img');
+              img.src = 'images/travel/map.png'; // Set the source of the image
+              img.alt = 'Map Logo'; // Set the alt text for the image
+              img.className = 'map-logo'; // Set the class for the image (optional for styling)
+
+              // Append the image to the link
+              link.appendChild(img);
+
+              // Prepend the link to the element
+              element.insertBefore(link, element.firstChild);
+          });
+
+          /******** START: ADD HREF TO <A> TAGS WHICH HAVE NO HREF ********/
+          document.querySelectorAll('a:not([href])').forEach(link => {
+            const textContent = link.textContent.trim().toLowerCase().replace(/\s+/g, '-');
+            link.href = '#'+`${textContent}`;
+          });
+          /******** END: ADD HREF TO <A> TAGS IN TOUR-INFO CLASS ********/
+
+          // // Initialize the map element and hide it initially
+          // const mapContainer = document.getElementById('map-overall');
+          // mapContainer.style.display = 'none'; // Hide the map initially
+          //
+          // // Initialize the map but don't set a view yet
+          // const map = L.map('map-overall');
+          //
+          // // Add OpenStreetMap tile layer
+          // L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+          //     maxZoom: 18,
+          //     attribution: '© OpenStreetMap contributors'
+          // }).addTo(map);
+          //
+          // // Function to parse coordinates from the link
+          // // function getCoordinatesFromLink(link) {
+          // //     const url = new URL(link);
+          // //     const lat = parseFloat(url.searchParams.get('lat'));
+          // //     const lon = parseFloat(url.searchParams.get('lon'));
+          // //     return { lat, lon };
+          // // }
+          //
+          // function getCoordinatesFromGoogleMapsLink(link) {
+          //   try {
+          //       const url = new URL(link);
+          //       const path = url.pathname;
+          //       console.log(path);
+          //       const searchParams = new URLSearchParams(url.search);
+          //
+          //       // Check if the URL contains coordinates in the path
+          //       const pathMatch = path.match(/\/maps\/@(\d+\.\d+),(-?\d+\.\d+),/);
+          //       console.log(pathMatch);
+          //       if (pathMatch) {
+          //           return { lat: parseFloat(pathMatch[1]), lon: parseFloat(pathMatch[2]) };
+          //       }
+          //
+          //       // Check if the URL contains coordinates in the query parameters
+          //       const latParam = searchParams.get('q') || searchParams.get('ll');
+          //       if (latParam) {
+          //           const [lat, lon] = latParam.split(',').map(parseFloat);
+          //           return { lat, lon };
+          //       }
+          //
+          //       // If no coordinates are found, return null
+          //       return null;
+          //   } catch (e) {
+          //       console.error('Error parsing Google Maps link:', e);
+          //       return null;
+          //   }
+          // }
+          //
+          // // Find all elements with the data-location-map-link attribute
+          // const locationLinks = document.querySelectorAll('[data-location-map-link]');
+          //
+          // // Flag to track if any valid coordinates are found
+          // let hasValidCoordinates = false;
+          //
+          // locationLinks.forEach(link => {
+          //     // Extract the coordinates
+          //     // console.log(link.getAttribute('data-location-map-link'));
+          //     const coordinates = getCoordinatesFromGoogleMapsLink(link.getAttribute('data-location-map-link'));
+          //     console.log(coordinates);
+          //     // Check if the coordinates are valid
+          //     if (!isNaN(coordinates.lat) && !isNaN(coordinates.lon)) {
+          //         // Set the flag to true when a valid coordinate is found
+          //         hasValidCoordinates = true;
+          //
+          //         // Show the map
+          //         mapContainer.style.display = 'block';
+          //
+          //         // Set the view to the first valid coordinate found
+          //         map.setView([coordinates.lat, coordinates.lon], 5);
+          //
+          //         // Add a marker to the map at the extracted coordinates
+          //         L.marker([coordinates.lat, coordinates.lon]).addTo(map)
+          //             .bindPopup(`Coordinates: ${coordinates.lat}, ${coordinates.lon}`)
+          //             .openPopup();
+          //     }
+          // });
+          //
+          // // If no valid coordinates were found, keep the map hidden
+          // if (!hasValidCoordinates) {
+          //     mapContainer.style.display = 'none';
+          //     console.log('no links')
+          // }
+
         })
         .catch(error => {
             // Log the error to the console
             console.error('Error:', error.message);
         });
+
         window.onload = function() {
             // Code to execute after all images and other resources are loaded
             document.body.style.display = 'block';

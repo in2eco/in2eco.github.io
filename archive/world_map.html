@@ -1,0 +1,112 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>World Visa</title>
+<meta charset="utf-8">
+<meta name="HandheldFriendly" content="True">
+<meta name="MobileOptimized" content="320">
+<meta name="viewport" content="initial-scale=1.0, minimum-scale=1.0, maximum-scale=1.0, user-scalable=no">
+<link href="http://fonts.googleapis.com/css?family=Raleway:700,300" rel="stylesheet"
+        type="text/css">
+<link rel="icon" href="images/in2eco-logo.png">
+<link rel="stylesheet" href="assets/css/style.css">
+<link rel="stylesheet" href="assets/css/prettify.css">
+<link rel="stylesheet" href="https://unpkg.com/leaflet/dist/leaflet.css" />
+<script src='https://kit.fontawesome.com/a076d05399.js' crossorigin='anonymous'></script>
+<script src="https://unpkg.com/leaflet/dist/leaflet.js"></script>
+<style>
+header , .pull-right a , .docs-nav a:hover, .docs-nav .active, span.sub_heading {background:#333;}
+a,nav a:active,a:active{color:#333;}
+</style>
+<style>
+figure
+{
+  text-align:center;
+  /* float:right; */
+}
+</style>
+<style>
+  .map {
+    height: 300px;
+    width: 100%;
+    border-radius: 10px;
+  }
+  #map-overall
+  {
+    height: 350px;
+  }
+</style>
+<style>
+    canvas {
+       border: 1px solid black;
+       position: relative;
+   }
+    #tooltip {
+        position: absolute;
+        background-color: rgba(0, 0, 0, 0.7);
+        color: white;
+        padding: 5px;
+        border-radius: 3px;
+        pointer-events: none;
+        display: none;
+    }
+</style>
+</head>
+<body>
+<div class="wrapper">
+<section>
+  <div class="container">
+    <ul class="docs-nav">
+      <li><strong><a href="index.html">Home</a></strong></li>
+      <li><a href="#overview">World Map</a></li>
+
+      <!-- <li><a href="#biometric">Biometric Enrollment</a></li> -->
+      <!-- <li class="separator"></li>
+      <li><strong>Customization</strong></li>
+      <li><a href="#Top">Top Area</a></li>
+	  <li><a href="#header">Header</a></li>
+      <li><a href="#label-post">About</a></li>
+      <li><a href="#footer">Sections</a></li>
+      <li><a href="#settings">Settings</a></li> -->
+    </ul>
+    <div class="docs-content">
+      <h2 class="entry-title"> Visa Information for Indian Citizens</h2>
+
+  <!-- ************************ SECTION: OVERVIEW ************************ -->
+  <!-- <h3 id="overview">World Map</h3> -->
+  <canvas id="worldMap" width="800" height="400"></canvas>
+  <div id="tooltip"></div>
+</div>
+</section>
+</div>
+<script src="https://d3js.org/d3.v6.min.js"></script>
+<script src="https://d3js.org/topojson.v1.min.js"></script>
+<script src="worldMap.js"></script>
+<script>
+    document.addEventListener("DOMContentLoaded", function () {
+        const tocLinks = document.querySelectorAll(".toc a");
+        const sections = document.querySelectorAll(".content h2");
+
+        window.addEventListener("scroll", () => {
+
+            sections.forEach((section) => {
+                const sectionTop = section.offsetTop;
+                if (pageYOffset >= sectionTop - 60) {
+                    current = section.getAttribute("id");
+                }
+            });
+
+            tocLinks.forEach((link) => {
+                link.classList.remove("active");
+                if (link.getAttribute("href").substring(1) === current) {
+                    link.classList.add("active");
+                }
+            });
+        });
+
+        // Highlight the first link when the page loads
+        tocLinks[0].classList.add("active");
+    });
+</script>
+</body>
+</html>

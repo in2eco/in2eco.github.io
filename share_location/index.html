@@ -1,0 +1,47 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Extract Coordinates from Google Maps Link</title>
+</head>
+<body>
+    <h2>Enter Google Maps Link and Label</h2>
+    <input type="text" id="mapLink" placeholder="Paste Google Maps link here" style="width: 300px;">
+    <input type="text" id="label" placeholder="Enter label">
+    <button onclick="extractCoordinates()">Extract and Save</button>
+
+    <script>
+        function extractCoordinates() {
+            const mapLink = document.getElementById('mapLink').value;
+            const label = document.getElementById('label').value;
+
+            // Regular expression to match latitude and longitude in Google Maps URL
+            const regex = /@(-?\d+\.\d+),(-?\d+\.\d+)/;
+            const matches = mapLink.match(regex);
+
+            if (matches) {
+                const lat = matches[1];
+                const lon = matches[2];
+
+                // Send coordinates and label to PHP
+                saveCoordinates(lat, lon, label);
+            } else {
+                alert("Invalid Google Maps link. Please check the link format.");
+            }
+        }
+
+        function saveCoordinates(lat, lon, label) {
+            const xhr = new XMLHttpRequest();
+            xhr.open("POST", "server.php", true);
+            xhr.setRequestHeader("Content-Type", "application/x-www-form-urlencoded");
+            xhr.onreadystatechange = function () {
+                if (xhr.readyState === 4 && xhr.status === 200) {
+                    alert("Location saved successfully!");
+                }
+            };
+            xhr.send(`lat=${lat}&lon=${lon}&label=${encodeURIComponent(label)}`);
+        }
+    </script>
+</body>
+</html>
