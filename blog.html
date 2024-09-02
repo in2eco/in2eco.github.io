@@ -16,6 +16,7 @@
       <!-- <div id="map-overall"></div> -->
     </div>
   </div>
+  <script src="https://unpkg.com/vis-network@9.1.2/dist/vis-network.min.js"></script>
   <script>
   const galleries = {};
   function changeSlide(n, galleryId) {
@@ -399,97 +400,138 @@
           });
 
           /******** START: ADD HREF TO <A> TAGS WHICH HAVE NO HREF ********/
-          document.querySelectorAll('a:not([href])').forEach(link => {
+          document.querySelectorAll('.page-link').forEach(link => {
             const textContent = link.textContent.trim().toLowerCase().replace(/\s+/g, '-');
             link.href = '#'+`${textContent}`;
           });
           /******** END: ADD HREF TO <A> TAGS IN TOUR-INFO CLASS ********/
 
-          // // Initialize the map element and hide it initially
-          // const mapContainer = document.getElementById('map-overall');
-          // mapContainer.style.display = 'none'; // Hide the map initially
-          //
-          // // Initialize the map but don't set a view yet
-          // const map = L.map('map-overall');
-          //
-          // // Add OpenStreetMap tile layer
-          // L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
-          //     maxZoom: 18,
-          //     attribution: '© OpenStreetMap contributors'
-          // }).addTo(map);
-          //
-          // // Function to parse coordinates from the link
-          // // function getCoordinatesFromLink(link) {
-          // //     const url = new URL(link);
-          // //     const lat = parseFloat(url.searchParams.get('lat'));
-          // //     const lon = parseFloat(url.searchParams.get('lon'));
-          // //     return { lat, lon };
-          // // }
-          //
-          // function getCoordinatesFromGoogleMapsLink(link) {
-          //   try {
-          //       const url = new URL(link);
-          //       const path = url.pathname;
-          //       console.log(path);
-          //       const searchParams = new URLSearchParams(url.search);
-          //
-          //       // Check if the URL contains coordinates in the path
-          //       const pathMatch = path.match(/\/maps\/@(\d+\.\d+),(-?\d+\.\d+),/);
-          //       console.log(pathMatch);
-          //       if (pathMatch) {
-          //           return { lat: parseFloat(pathMatch[1]), lon: parseFloat(pathMatch[2]) };
-          //       }
-          //
-          //       // Check if the URL contains coordinates in the query parameters
-          //       const latParam = searchParams.get('q') || searchParams.get('ll');
-          //       if (latParam) {
-          //           const [lat, lon] = latParam.split(',').map(parseFloat);
-          //           return { lat, lon };
-          //       }
-          //
-          //       // If no coordinates are found, return null
-          //       return null;
-          //   } catch (e) {
-          //       console.error('Error parsing Google Maps link:', e);
-          //       return null;
-          //   }
-          // }
-          //
-          // // Find all elements with the data-location-map-link attribute
-          // const locationLinks = document.querySelectorAll('[data-location-map-link]');
-          //
-          // // Flag to track if any valid coordinates are found
-          // let hasValidCoordinates = false;
-          //
-          // locationLinks.forEach(link => {
-          //     // Extract the coordinates
-          //     // console.log(link.getAttribute('data-location-map-link'));
-          //     const coordinates = getCoordinatesFromGoogleMapsLink(link.getAttribute('data-location-map-link'));
-          //     console.log(coordinates);
-          //     // Check if the coordinates are valid
-          //     if (!isNaN(coordinates.lat) && !isNaN(coordinates.lon)) {
-          //         // Set the flag to true when a valid coordinate is found
-          //         hasValidCoordinates = true;
-          //
-          //         // Show the map
-          //         mapContainer.style.display = 'block';
-          //
-          //         // Set the view to the first valid coordinate found
-          //         map.setView([coordinates.lat, coordinates.lon], 5);
-          //
-          //         // Add a marker to the map at the extracted coordinates
-          //         L.marker([coordinates.lat, coordinates.lon]).addTo(map)
-          //             .bindPopup(`Coordinates: ${coordinates.lat}, ${coordinates.lon}`)
-          //             .openPopup();
-          //     }
-          // });
-          //
-          // // If no valid coordinates were found, keep the map hidden
-          // if (!hasValidCoordinates) {
-          //     mapContainer.style.display = 'none';
-          //     console.log('no links')
-          // }
+          /********* START: DRAW NETWORK *************/
+          function drawNetwork(divId, nodes, edges)
+          {
 
+            // Function to determine layout direction based on screen width
+            function getLayoutDirection() {
+                return window.innerWidth < 768 ? 'UD' : 'LR'; // 'UD' (Up-Down) for small screens, 'LR' (Left-Right) for larger
+            }
+
+            // Create the network graph with initial layout settings
+            const container = document.getElementById(divId);
+            const data = { nodes: nodes, edges: edges };
+            let options = {
+                autoResize: true,
+                nodes: {
+                    shape: 'dot',
+                    size: 20,
+                    font: {
+                        size: 16, // Fixed font size for readability
+                        face: 'Arial',
+                        color: '#343434',
+                        // scaling: { enabled: false }
+                    },
+                    borderWidth: 2,
+                    groups: {
+                        g1: {
+                            color: { background: 'lightblue', border: 'blue' }
+                        },
+                        g2: {
+                            color: { background: 'lightgreen', border: 'green' }
+                        }
+                    }
+                },
+                edges: {
+                    arrows: 'to', // Adds arrows indicating direction
+                    width: 2,
+                    groups: {
+                        g1: {
+                            color: { color: 'blue' }
+                        },
+                        g2: {
+                            color: { color: 'green' }
+                        }
+                    }
+                },
+                layout: {
+                    hierarchical: {
+                        direction: getLayoutDirection(), // Set initial direction based on screen size
+                        sortMethod: 'directed',
+                        // nodeSpacing: 100, // Reduce node spacing for compactness
+                        // levelSeparat ion: 100 // Reduce level separation to minimize whitespace
+                    }
+                },
+                physics: {
+                    enabled: true // Keeps nodes fixed in place
+                },
+                interaction: {
+                  zoomView: false,
+                  dragView: false,
+                  navigationButtons: false,
+                },
+            };
+
+            // Initialize the network
+            let network = new vis.Network(container, data, options);
+
+            // Adjust the view to fit the graph tightly within the container
+            network.fit({ animation: false });
+
+            // Function to update layout direction and fit on window resize
+            function updateLayout() {
+                network.setOptions({
+                    layout: {
+                        hierarchical: {
+                            direction: getLayoutDirection() // Update layout direction based on screen size
+                        }
+                    }
+                });
+                network.fit({ animation: false }); // Refit the graph to remove extra whitespace
+            }
+
+            // Add event listener to detect window resize and update layout
+            window.addEventListener('resize', updateLayout);
+          }
+
+          // Define nodes for the fork graph
+          // const nodes = new vis.DataSet([
+          //     { id: 1, label: 'Leh market', group: 'main' },
+          //     { id: 2, label: 'Stok palace', group: 'main' },
+          //     { id: 3, label: 'Shey palace', group: 'main' },
+          //     { id: 4, label: 'Thiksey monastery', group: 'main' },
+          //     { id: 5, label: 'Hemis monastery', group: 'main' },
+          //     { id: 6, label: 'Chang La pass', group: 'main' }
+          // ]);
+          //
+          // // Define edges to represent branches
+          // const edges = new vis.DataSet([
+          //     { from: 1, to: 2 },
+          //     { from: 2, to: 3 },
+          //     { from: 3, to: 4 },
+          //     { from: 4, to: 5 },
+          //     { from: 5, to: 6 }
+          // ]);
+
+          // drawNetwork('day-tour-1', nodes, edges);
+
+          const nodes = new vis.DataSet([
+              { id: 1, label: 'Leh market', group: 'g1' },
+              { id: 2, label: 'Khardung La pass', group: 'g1' },
+              { id: 3, label: 'Khalsar', group: 'g1' },
+              { id: 4, label: 'Diksit monastery', group: 'g2' },
+              { id: 5, label: 'Hunder', group: 'g2' },
+              { id: 6, label: 'Nubra valley', group: 'g1' }
+          ]);
+
+          // Define edges to represent branches
+          const edges = new vis.DataSet([
+              { from: 1, to: 2, group: 'g1' },
+              { from: 2, to: 3, group: 'g1' },
+              { from: 3, to: 4, group: 'g2' },
+              { from: 4, to: 5, group: 'g2' },
+              { from: 3, to: 6, group: 'g1' }
+          ]);
+          drawNetwork('multi-day-tour-1', nodes, edges);
+
+          /********* END: DRAW NETWORK *************/
         })
         .catch(error => {
             // Log the error to the console

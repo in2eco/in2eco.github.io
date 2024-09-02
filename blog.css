@@ -169,6 +169,14 @@ figcaption
   display: none;
 } */
 
+.network {
+    width: 100%;
+    height: auto; /* Adjust height as needed */
+    border: none; /* Remove border to eliminate extra space */
+    margin: 0;
+    padding: 0;
+}
+
 @media (max-width: 1000px){
   .grid-image {
     display: grid;
