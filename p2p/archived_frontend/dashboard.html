@@ -1,0 +1,227 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Editable JSON Data</title>
+    <style>
+    body {
+  font-family: Arial, sans-serif;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  min-height: 100vh;
+  background-color: #f0f2f5;
+  margin: 0;
+}
+
+.form-group {
+  margin-bottom: 20px;
+}
+
+label {
+  display: block;
+  margin-bottom: 8px;
+  font-size: 14px;
+  color: #333;
+  font-weight: bold;
+  letter-spacing: 0.5px;
+}
+
+input {
+  width: 100%;
+  padding: 12px 15px;
+  font-size: 14px;
+  border: 2px solid #ddd;
+  border-radius: 8px;
+  background-color: #fff;
+  transition: border-color 0.3s, box-shadow 0.3s;
+  outline: none;
+}
+
+input:focus {
+  border-color: #6200ea;
+  box-shadow: 0 0 8px rgba(98, 0, 234, 0.2);
+}
+
+button {
+  display: inline-block;
+  padding: 12px 20px;
+  font-size: 16px;
+  color: #fff;
+  background-color: #6200ea;
+  border: none;
+  border-radius: 8px;
+  cursor: pointer;
+  transition: background-color 0.3s, transform 0.2s;
+  box-shadow: 0 4px 10px rgba(98, 0, 234, 0.3);
+}
+
+button:hover {
+  background-color: #7c4dff;
+}
+
+button:active {
+  transform: scale(0.98);
+}
+/*
+        body {
+            font-family: Arial, sans-serif;
+            margin: 20px;
+        }
+        .form-group {
+            margin-bottom: 10px;
+        }
+        label {
+            display: block;
+            margin-bottom: 5px;
+            font-weight: bold;
+        }
+        input[type="text"] {
+            width: 100%;
+            padding: 8px;
+            box-sizing: border-box;
+        }
+        .save-btn {
+            padding: 10px 20px;
+            font-size: 16px;
+            margin-top: 10px;
+            cursor: pointer;
+        } */
+    </style>
+</head>
+<body>
+
+    <h2>Contact Details</h2>
+    <div id="form-container"></div>
+    <button class="save-btn" onclick="saveData()">Save Changes</button>
+
+    <script>
+        // Function to generate form fields based on JSON data
+        function generateForm(data, parentKey = '') {
+            const container = document.getElementById('form-container');
+
+            Object.entries(data).forEach(([key, value]) => {
+              if(typeof value == 'string')
+              {
+                const formGroup = document.createElement('div');
+                formGroup.className = 'form-group';
+
+                const label = document.createElement('label');
+                if(key=="telegram" || key=="instagram" || key=="linkedin" )
+                {
+                  label.textContent = key[0].toUpperCase() + key.slice(1) + ' ID';
+                }
+                else if(key=="talk2me")
+                {
+                  label.textContent = 'Details for "Talk with me about anything"';
+                }
+                else {
+                  label.textContent = key[0].toUpperCase() + key.slice(1);
+                }
+
+                formGroup.appendChild(label);
+
+                if (typeof value === 'object' && value !== null) {
+                    // Recursively generate form fields for nested objects
+                    generateForm(value, parentKey ? `${parentKey}.${key}` : key);
+                } else {
+                    // Create input field for editable values
+                    const input = document.createElement('input');
+                    input.type = 'text';
+                    input.value = value;
+                    input.setAttribute('data-key', parentKey ? `${parentKey}.${key}` : key);
+                    input.addEventListener('input', handleInputChange);
+                    formGroup.appendChild(input);
+                }
+
+                container.appendChild(formGroup);
+              }
+            });
+        }
+
+        // Function to handle input changes and update JSON data
+        function handleInputChange(event) {
+            const key = event.target.getAttribute('data-key');
+            const value = event.target.value;
+
+            // Update JSON data based on input changes
+            updateJsonData(data, key, value);
+        }
+
+        // Function to update JSON data based on key path
+        function updateJsonData(data, keyPath, value) {
+            const keys = keyPath.split('.');
+            let current = data;
+
+            // Traverse the object to reach the correct key
+            for (let i = 0; i < keys.length - 1; i++) {
+                current = current[keys[i]];
+            }
+
+            // Update the value
+            current[keys[keys.length - 1]] = value;
+            console.log(current);
+            fetch('updateContact.php', {
+                  method: 'POST',
+                  headers: {
+                      'Content-Type': 'application/json'
+                  },
+                  body: JSON.stringify(current)
+              });
+
+        }
+
+        // Function to save data (or perform other actions)
+        function saveData() {
+            // console.log('Updated JSON Data:', data);
+            alert('Changes saved!');
+        }
+
+        async function fetchDataFromServer(username) {
+            // Construct the URL with the username as a query parameter
+            const url = `server.php?username=${encodeURIComponent(username)}`;
+
+            try {
+                // Fetch the data from the server
+                const response = await fetch(url);
+
+                // Check if the response is okay
+                if (!response.ok) {
+                    throw new Error(`HTTP error! Status: ${response.status}`);
+                }
+
+                // Parse the JSON data
+                const data = await response.json();
+
+                // Assign data to a variable (for demonstration)
+                const userData = data;
+
+                // Return the data
+                return userData;
+            } catch (error) {
+                // Handle errors (network issues, JSON parsing issues, etc.)
+                console.error('Error fetching data:', error);
+                throw error; // Optionally rethrow the error
+            }
+        }
+
+        // Example usage
+        (async () => {
+            try {
+              // Create a URL object using the current page's URL
+              const url = new URL(window.location.href);
+              // Use URLSearchParams to get query parameters
+              const params = new URLSearchParams(url.search);
+              // Get the value of the 'username' parameter
+              const username = params.get('username');
+                data = await fetchDataFromServer(username);
+                // Generate the form on page load
+                generateForm(data);
+            } catch (error) {
+                console.error('Failed to fetch user data:', error);
+            }
+        })();
+    </script>
+</body>
+</html>

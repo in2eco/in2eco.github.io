@@ -1,0 +1,274 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link href="user.css" rel="stylesheet">
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+    <link rel="stylesheet" href="https://cdn.datatables.net/1.13.4/css/jquery.dataTables.min.css"/>
+    <script src="https://cdn.datatables.net/1.13.4/js/jquery.dataTables.min.js"></script>
+    <title>Library of Things</title>
+    <style></style>
+</head>
+<body>
+  <div class="dashboard">
+      <figure><img id="profile-photo" src="files/logo/profile_picture.jpg" alt='profile photo'></img></figure>
+      <hr>
+      <h1 id="name"></h1>
+      <p id="status-container"></p>
+      <hr>
+      <h2>Library of Things</h2>
+      <table id="lot-datatable" class="stripe">
+        <thead>
+            <tr>
+                <th>Item</th>
+                <th>Action</th>
+            </tr>
+        </thead>
+        <tbody id="library-of-things-container">
+        </tbody>
+    </table>
+      <hr>
+      <h2>Connect with me</h2>
+      <ul id="contact-container">
+      </ul>
+      <hr>
+      <h2>Talk with me about anything</h2>
+      <p id="talk2me-container"></p>
+      <hr>
+      <h2>Contact QR Code</h2>
+      <figure><img id="qr-code" src="files/logo/blank_qr.png" alt='qr code'></img></figure>
+  </div>
+<script>
+  function createWebpage(data)
+  {
+    selector=document.getElementById('profile-photo');
+    selector.setAttribute('src','files/profile_photo/'+data['username']+'.jpg');
+    selector=document.getElementById('qr-code');
+    selector.setAttribute('src','files/qr_code/'+data['username']+'.png');
+    selector.parentNode.style.display='block';
+    for (const key in data) {
+        if (data.hasOwnProperty(key)) {
+          const value = data[key];
+          if(key=="name")
+          {
+            selector=document.getElementById('name');
+            selector.innerHTML = data['name'];
+          }
+          else if(key=="status")
+          {
+            selector=document.getElementById('status-container');
+            selector.className = selector.className+' editable-content';
+            selector.innerHTML = (data['status'] ? data['status'] : "");
+          }
+          else if(key=="telegram" || key=="facebook" || key=="instagram" || key=="linkedin" || key=="whatsapp" || key=="youtube" || key=="snapchat" || key=="email")
+          {
+            // Create a new figure element
+            const figure = document.createElement('li');
+            // figure.className = 'contact-info'; // Add the class
+            // Create a new anchor element
+            const anchor = document.createElement('a');
+            anchor.id = key; // Set the ID
+            anchor.className = 'contact-info editable-content';
+            if(key=="email")
+            {
+              anchor.setAttribute('href','mailto:'+value);
+            }
+            else if (key=="telegram") {
+              anchor.setAttribute('href','https://t.me/'+value);
+            }
+            else if (key=="instagram") {
+              anchor.setAttribute('href','https://instagram.com/'+value);
+            }
+            else if (key=="linkedin") {
+              anchor.setAttribute('href','https://linkedin.com/'+value);
+            }
+            else
+            {
+              anchor.setAttribute('href',value);
+            }
+            // Create a new image element
+            const img = document.createElement('img');
+            img.className = 'logo'; // Add the class
+            img.src = 'files/logo/'+key+'.png'; // Set the source
+            img.alt = key+' logo'; // Set the alt text
+            // Append the image to the anchor
+            anchor.appendChild(img);
+            // Append the anchor to the figure
+            figure.appendChild(anchor);
+            // Append the figure to the container
+            document.getElementById('contact-container').appendChild(figure);
+
+            selector=document.getElementById(key);
+            // selector.setAttribute('href',value);
+            // selector.parentNode.style.display='block';
+          }
+          else if (key=='talk2me') {
+            // console.log(value[0]);
+            selector=document.getElementById('talk2me-container');
+            selector.className = selector.className+' editable-content';
+            selector.innerHTML = value;
+          }
+        }
+      }
+      // Select all elements with the class 'target-element'
+      const elements = document.querySelectorAll('.editable-content');
+      // console.log(elements);
+
+      // Function to add a button to a given element
+      function addButtonToElement(element) {
+        // Create a new button element
+        const edit_button = document.createElement('button');
+        edit_button.className = 'edit-button'; // Add custom class
+        // Append the button to the current element
+        element.appendChild(edit_button);
+        const delete_button = document.createElement('button');
+        delete_button.className = 'delete-button'; // Add custom class
+        // Append the button to the current element
+        element.appendChild(delete_button);
+        // Optional: Add an event listener for button actions
+        edit_button.addEventListener('click', () => {
+          // alert('Button clicked on ' + element.className);
+          if(element.parentNode.classList.contains('library-of-things-item'))
+          {
+
+          }
+        });
+        delete_button.addEventListener('click', () => {
+          // alert('Button clicked on ' + element.className);
+          if(element.parentNode.classList.contains('library-of-things-item'))
+          {
+
+          }
+        });
+      }
+
+      // Loop through each selected element and add a button
+      elements.forEach((element) => {
+        addButtonToElement(element);
+      });
+    /******** END: FILL CONTACT DETAILS ********/
+  }
+
+  function createLibraryOfThingsTable(data)
+  {
+    else if(key=='library-of-things')
+    {
+      const container = document.getElementById('library-of-things-container');
+      if(container)
+      {
+        value.forEach(item => {
+            const tr = document.createElement('tr');
+            tr.className = "library-of-things-item";
+            const td1 = document.createElement('td');
+            td1.innerHTML = item;
+            const td2 = document.createElement('td');
+            td2.className = 'editable-content';
+            // td2.innerHTML = 'hello'+item;
+            tr.appendChild(td1);
+            tr.appendChild(td2);
+            // const li = document.createElement('li');
+            // li.className = 'library-of-things-item editable-content';
+            // li.textContent = item;
+            container.appendChild(tr);
+        });
+      }
+    }
+    $('#lot-datatable').DataTable({
+        paging: false, // Enable pagination
+        searching: true, // Enable search functionality
+        ordering: true, // Enable column sorting
+        info: true, // Display table information
+        // lengthMenu: [5, 10, 25, 50] // Number of entries per page
+    });
+  }
+
+  /******** START: FUNCTION TO FETCH USER DATA FROM SERVER ********/
+  async function fetchDataFromServer(username) {
+      // Construct the URL with the username as a query parameter
+      const url = `server.php?username=${encodeURIComponent(username)}`;
+
+      try {
+          // Fetch the data from the server
+          const response = await fetch(url);
+          // Check if the response is okay
+          if (!response.ok) {
+              throw new Error(`HTTP error! Status: ${response.status}`);
+          }
+
+          // Parse the JSON data
+          const data = await response.json();
+
+          // Assign data to a variable (for demonstration)
+          const userData = data;
+
+          // Return the data
+          return userData;
+      } catch (error) {
+          // Handle errors (network issues, JSON parsing issues, etc.)
+          console.error('Error fetching data:', error);
+          throw error; // Optionally rethrow the error
+      }
+  }
+
+  /******** START: FETCH DATA FROM SERVER AND CALL CREATE WEBPAGE FUNCTION ********/
+  (async () => {
+      try {
+        // Create a URL object using the current page's URL
+        const url = new URL(window.location.href);
+        // Use URLSearchParams to get query parameters
+        const params = new URLSearchParams(url.search);
+        // Get the value of the 'username' parameter
+        const username = params.get('username');
+          data = await fetchDataFromServer(username);
+          createWebpage(data);
+      } catch (error) {
+          console.error('Failed to fetch user data:', error);
+      }
+  })();
+
+  // FETCH LOT DATA
+  async function fetchLoTDataFromServer(username) {
+      // Construct the URL with the username as a query parameter
+      const url = `fetchLoT.php?username=${encodeURIComponent(username)}`;
+
+      try {
+          // Fetch the data from the server
+          const response = await fetch(url);
+          // Check if the response is okay
+          if (!response.ok) {
+              throw new Error(`HTTP error! Status: ${response.status}`);
+          }
+
+          // Parse the JSON data
+          const data = await response.json();
+
+          // Assign data to a variable (for demonstration)
+          const userData = data;
+
+          // Return the data
+          return userData;
+      } catch (error) {
+          // Handle errors (network issues, JSON parsing issues, etc.)
+          console.error('Error fetching data:', error);
+          throw error; // Optionally rethrow the error
+      }
+  }
+  (async () => {
+      try {
+        // Create a URL object using the current page's URL
+        const url = new URL(window.location.href);
+        // Use URLSearchParams to get query parameters
+        const params = new URLSearchParams(url.search);
+        // Get the value of the 'username' parameter
+        const username = params.get('username');
+          data = await fetchLoTDataFromServer(username);
+          createLibraryOfThingsTable(data);
+      } catch (error) {
+          console.error('Failed to fetch user data:', error);
+      }
+  })();
+</script>
+</body>
+</html>
