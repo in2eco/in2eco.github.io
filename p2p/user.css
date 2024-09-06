@@ -3,10 +3,6 @@ body {
     margin: 0;
     padding: 0;
     background-color: #f4f4f4;
-    /* text-align: center; */
-    /* justify-content: center; */
-    /* align-items: center; */
-    /* height: 100vh; */
 }
 .dashboard {
     background-color: #ffffff;
@@ -50,8 +46,17 @@ li
 button
 {
   padding: 5px;
-  margin: 0px 0px 0px 5px;
+  margin: 5px;
   border-radius: 4px;
+}
+.id, .username
+{
+  display: none;
+}
+#lot-container
+{
+  /* width:50%; */
+  margin: auto;
 }
 .add-button::after
 {

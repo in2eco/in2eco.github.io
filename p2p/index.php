@@ -1,162 +1,162 @@
 <?php
-// Define the path to the JSON file
-$lotDataFile = 'files/data/lot.json';
-$userDataFile = 'files/data/user.json';
+// Database connection parameters
+$servername = "localhost";   // MySQL server
+$username = "root";          // MySQL username
+$password = "abcd1234";              // MySQL password
+$dbname = "in2eco";   // Your database name
 
-// Read and decode the JSON data
-$lotData = json_decode(file_get_contents($lotDataFile), true);
-$userData = json_decode(file_get_contents($userDataFile), true);
+// Create a connection to the MySQL database
+$conn = new mysqli($servername, $username, $password, $dbname);
 
-// Print the loaded data for debugging
-// echo "<pre>Loaded Data: ";
-// print_r($lotData);
-// echo "</pre>";
+function findLotData()
+{
+  global $servername,$username,$password,$dbname,$conn;
+  $sql = "SELECT * FROM lot";  // Modify with your table and columns
+  $result = $conn->query($sql);
 
-// Detect keys from the first element of the JSON array
-$lotKeys = !empty($lotData) ? array_keys($lotData[0]) : [];
-$userKeys = !empty($userData) ? array_keys($userData[0]) : [];
-
-// Function to find the index of a user by username
-function findUserIndexByUsername($userData, $searchUsername) {
-    // Iterate through the array with indexes using foreach
-    foreach ($userData as $index => $user) {
-        // Check if the username matches the given username
-        if ($user['username'] === $searchUsername) {
-            return $index; // Return the index of the matching user
-        }
-    }
-    // Return -1 if no matching username is found
-    return -1;
+  // Check if the query returns any results
+  if ($result->num_rows > 0) {
+      // Fetch all rows and save them in $userData
+      $lotData = $result->fetch_all(MYSQLI_ASSOC);
+  } else {
+      echo "No data found in the users table.";
+  }
+  return $lotData;
 }
 
-function findNameFromUsername($userData, $searchUsername) {
-    foreach ($userData as $user) {
-        // Check if the username matches
-        if ($user['username'] === $searchUsername) {
-            return $user['name'];
-        }
-    }
-    // Return null if no match is found
-    return null;
+function findLotDataNearMe()
+{
+  global $servername,$username,$password,$dbname,$conn;
+  $latitude=$_GET["latitude"];
+  $longitude=$_GET["longitude"];
+  $proximity = 100;
+  $sql = "SELECT * FROM lot where username in (select username from users where (latitude-{$latitude}<={$proximity} AND latitude-{$latitude}>=-{$proximity}) AND (longitude-{$longitude}>=-{$proximity} AND longitude-{$longitude}<={$proximity}))";  // Modify with your table and columns
+
+
+  $result = $conn->query($sql);
+  // Check if the query returns any results
+  if ($result->num_rows > 0) {
+      // Fetch all rows and save them in $userData
+      $lotData = $result->fetch_all(MYSQLI_ASSOC);
+      return $lotData;
+  } else {
+      echo "No data found in the users table.";
+  }
 }
 
-function findLocationFromUsername($userData, $searchUsername) {
-    foreach ($userData as $user) {
-        // Check if the username matches
-        if ($user['username'] === $searchUsername) {
-            return ["latitude"=> $user['latitude'], "longitude" => $user['longitude']] ;
-        }
-    }
-    // Return null if no match is found
-    return null;
+function findLotDataWithUsername()
+{
+  global $servername,$username,$password,$dbname,$conn;
+  $sql = "SELECT * FROM lot where username='".$_GET["username"]."'";  // Modify with your table and columns
+  $result = $conn->query($sql);
+
+  // Check if the query returns any results
+  if ($result->num_rows > 0) {
+      // Fetch all rows and save them in $userData
+      $lotData = $result->fetch_all(MYSQLI_ASSOC);
+  } else {
+      echo "No data found in the users table.";
+  }
+  return $lotData;
 }
 
-function findTalk2MeFromUsername($userData, $searchUsername) {
-    foreach ($userData as $user) {
-        // Check if the username matches
-        if ($user['username'] === $searchUsername) {
-            return $user['talk2me'];
-        }
-    }
-    // Return null if no match is found
-    return null;
+function findKeysOfLotDatabase()
+{
+  global $servername,$username,$password,$dbname,$conn;
+  $sql = "DESCRIBE lot";
+  $result = $conn->query($sql);
+  if ($result->num_rows > 0) {
+      // Fetch each row and store the column name
+      while ($row = $result->fetch_assoc()) {
+          $lotKeys[] = $row['Field'];  // 'Field' column contains the name of each column
+      }
+  }
+  return $lotKeys;
 }
 
-// // Print the detected keys for debugging
-// echo "<pre>Detected Keys: ";
-// print_r($lotKeys);
-// echo "</pre>";
+function findUserIndexByUsername($searchUsername) {
+  global $servername,$username,$password,$dbname,$conn;
+  $sql = "select id from users where username='".$searchUsername."'";
+  $result = $conn->query($sql);
+  $result = $result->fetch_assoc();
+  return $result["id"];
+}
+
+function findNameFromUsername($searchUsername) {
+  global $servername,$username,$password,$dbname,$conn;
+  $sql = "select name from users where username='".$searchUsername."'";
+  $result = $conn->query($sql);
+  $result = $result->fetch_assoc();
+  return $result["name"];
+}
+
+function findContactFromUsername($searchUsername) {
+  global $servername,$username,$password,$dbname,$conn;
+  $sql = "select instagram, telegram, email, whatsapp from users where username='".$searchUsername."'";
+  $result = $conn->query($sql);
+  $result = $result->fetch_assoc();
+  return ["instagram" => $result["instagram"], "telegram" => $result["telegram"], "email" => $result["email"], "whatsapp" => $result["whatsapp"]];
+}
+
+function findLocationFromUsername($searchUsername) {
+  global $servername,$username,$password,$dbname,$conn;
+  $sql = "select latitude, longitude from users where username='".$searchUsername."'";
+  $result = $conn->query($sql);
+  $result = $result->fetch_assoc();
+  return ["latitude"=> $result['latitude'], "longitude" => $result['longitude']] ;
+}
 
 // Handle form submissions for adding, editing, and deleting data
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
-    // Print the posted data for debugging
-    // echo "<pre>POST Data: ";
-    // print_r($_POST);
-    // echo "</pre>";
 
     if (isset($_POST['action'])) {
         switch ($_POST['action']) {
             case 'add':
-                // Add a new entry with dynamic keys
-                $newEntry = ['id' => end($lotData)['id'] + 1];
-                foreach ($lotKeys as $lotKey) {
-                    if ($lotKey !== 'id') {
-                        $newEntry[$lotKey] = $_POST[$lotKey];
-                    }
-                }
-
-                // Print the new entry for debugging
-                echo "<pre>New Entry: ";
-                print_r($newEntry);
-                echo "</pre>";
-
-                $lotData[] = $newEntry;
-                break;
+            global $servername,$username,$password,$dbname,$conn;
+            $sql = 'insert into lot (item, username) values ("'.$_POST["item"].'","'.$_GET["username"].'");';
+            $result = $conn->query($sql);
+            break;
 
             case 'edit':
-                // Edit an existing entry with dynamic keys
-                foreach ($lotData as &$entry) {
-                    if ($entry['id'] == $_POST['id']) {
-                        foreach ($lotKeys as $lotKey) {
-                            if ($lotKey !== 'id') {
-                                $entry[$lotKey] = $_POST[$lotKey];
-                            }
-                        }
-                    }
-                }
-
-                // Print the edited data for debugging
-                echo "<pre>Edited Data: ";
-                print_r($lotData);
-                echo "</pre>";
-
-                break;
+              global $servername,$username,$password,$dbname,$conn;
+              $sql = 'update lot set item="'.$_POST["item"].'" where id="'.$_POST["id"].'"';
+              $result = $conn->query($sql);
+              break;
 
             case 'delete':
-                // Delete an entry
-                $lotData = array_filter($lotData, function ($entry) {
-                    return $entry['id'] != $_POST['id'];
-                });
+              global $servername,$username,$password,$dbname,$conn;
+              $sql = 'delete from lot where id="'.$_POST["id"].'"';
+              $result = $conn->query($sql);
+              break;
 
-                // Print the data after deletion for debugging
-                echo "<pre>Data After Deletion: ";
-                print_r($lotData);
-                echo "</pre>";
-                break;
             case 'updateLocation':
-                // Update location
-                foreach ($userData as &$entry) {
-                    if ($entry['id'] == $_POST['id']) {
-                        foreach ($lotKeys as $lotKey) {
-                            if ($lotKey !== 'id') {
-                                $entry[$lotKey] = $_POST[$lotKey];
-                            }
-                        }
-                    }
-                }
-
-                // Print the edited data for debugging
-                echo "<pre>Edited Data: ";
-                print_r($userData);
-                echo "</pre>";
-
-                break;
+              global $servername,$username,$password,$dbname,$conn;
+              $sql = 'update users set latitude='.$_POST["latitude"].', longitude='.$_POST["longitude"].' where username="'.$_GET["username"].'"';
+              $result = $conn->query($sql);
+              break;
         }
 
         // Save changes back to the JSON file
-        file_put_contents($lotDataFile, json_encode(array_values($lotData), JSON_PRETTY_PRINT));
+        // file_put_contents($lotDataFile, json_encode(array_values($lotData), JSON_PRETTY_PRINT));
 
         // Redirect to avoid form resubmission
         header('Location: index.php?username='.$_GET["username"]);
         exit();
     }
 }
+
+
+// // Print the detected keys for debugging
+// echo "<pre>Detected Keys: ";
+// print_r($lotKeys);
+// echo "</pre>";
 ?>
 
 <!DOCTYPE html>
 <html lang="en">
 <head>
     <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>LoT</title>
     <link rel="stylesheet" href="https://cdn.datatables.net/1.11.5/css/jquery.dataTables.min.css">
     <link rel="stylesheet" href="user.css">
@@ -164,107 +164,32 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     <script src="https://unpkg.com/leaflet/dist/leaflet.js"></script>
     <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
     <script src="https://cdn.datatables.net/1.11.5/js/jquery.dataTables.min.js"></script>
-    <style>
-      .id, .username
-      {
-        display: none;
-      }
-      #lot-container
-      {
-        /* width:50%; */
-        margin: auto;
-      }
-    </style>
 </head>
 <body>
   <div class="dashboard">
       <?php if(isset($_GET['username'])): ?>
-        <div id="profile-container">
-          <figure><img id="profile-photo" src="files/profile_photo/<?=  (($_GET["username"]))?>.jpg" alt='profile photo'></img></figure>
-          <!-- <hr> -->
-          <h1><?= findNameFromUsername($userData,$_GET["username"])?></h1>
-          <p></p>
-        </div>
+        <h1><?= findNameFromUsername($_GET["username"])?></h1>
         <hr>
-        <h2>Location</h2>
-        <div id="map"></div>
-        <button onclick="getCurrentLocation()">Set Current Location</button>
-        <script>
-          // Initialize the map and set its view to the specified latitude and longitude
-          <?php $location = findLocationFromUsername($userData, $_GET["username"])?>
-          var map = L.map('map').setView([<?= $location["latitude"]?>,<?= $location["longitude"]?>], 16); // Example coordinates: London
-
-          // Add the OSM tile layer to the map
-          L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
-              maxZoom: 19,
-              attribution: '© OpenStreetMap contributors'
-          }).addTo(map);
-
-          // Latitude and Longitude for the marker
-          var latitude = <?= $location["latitude"]?>;  // Example latitude
-          var longitude = <?= $location["longitude"]?>;  // Example longitude
-
-          // Create and add the marker to the map
-          var marker = L.marker([latitude, longitude]).addTo(map);
-
-          // Optional: Add a popup to the marker
-          marker.bindPopup("Leh, Ladakh").openPopup();
-
-          // JavaScript function to get the current location
-          function updateUserLocation() {
-              // Check if the Geolocation API is available
-              if (navigator.geolocation) {
-                  // Get the current position of the user
-                  navigator.geolocation.getCurrentPosition(
-                      // Success callback
-                      function(position) {
-                          // Extract latitude and longitude
-                          var latitude = position.coords.latitude;
-                          var longitude = position.coords.longitude;
-                          // Send the coordinates to the server using jQuery AJAX
-                          $('<form>', {
-                              'method': 'POST',
-                              'html': '<input type="hidden" name="latitude" value="' + latitude + '"><input type="hidden" name="longitude" value="'+ longitude +'"><input type="hidden" name="action" value="updateLocation">';
-                          }).appendTo(document.body).submit();
-                      },
-                      // Error callback
-                      function(error) {
-                          console.error("Error getting location: ", error.message);
-                      }
-                  );
-              } else {
-                  alert("Geolocation is not supported by this browser.");
-              }
-          }
-        </script>
+        <?php include 'contact.php';?>
+        <hr>
+        <?php include 'location.php'?>
         <hr>
         <div id="lot-container">
         <h2>Library of Things</h2>
-        <table id="dataTable" class="display">
+        <table id="lotTable" class="display">
             <thead>
                 <tr>
-                    <?php foreach ($lotKeys as $lotKey): ?>
-                        <th class="<?=$lotKey?>" ><?= htmlspecialchars(ucfirst($lotKey)) ?></th>
+                    <?php
+                      $lotKeys = findKeysOfLotDatabase();
+                      foreach ($lotKeys as $lotKey): ?>
+                      <th class="<?=$lotKey?>" ><?= htmlspecialchars(ucfirst($lotKey)) ?></th>
                     <?php endforeach; ?>
                     <th>Actions</th>
                 </tr>
             </thead>
-            <tbody>
-                <?php foreach ($lotData as $row): if($row["username"]===$_GET["username"]): ?>
-                    <tr>
-                        <?php foreach ($lotKeys as $lotKey):?>
-                            <td class="<?=$lotKey?>" ><?= htmlspecialchars($row[$lotKey]) ?></td>
-                        <?php endforeach; ?>
-                        <td>
-                            <button onclick="editData(<?= htmlspecialchars(json_encode($row)) ?>)">Edit</button>
-                            <button onclick="deleteData(<?= $row['id'] ?>)">Delete</button>
-                        </td>
-                    </tr>
-                <?php endif; endforeach; ?>
-            </tbody>
         </table>
 
-        <button onclick="showAddForm()">Add New</button>
+        <button onclick="showAddForm()">Add New Item</button>
         </div>
 
         <!-- Form Modal -->
@@ -287,7 +212,37 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 
         <script>
         $(document).ready(function() {
-            $('#dataTable').DataTable();
+            var url = "fetchUserData.php?username=" + "<?=$_GET['username']?>";
+            $('#lotTable').DataTable({
+                "processing": true,
+                "serverSide": true,
+                "ajax": {
+                  "url": url
+                },
+                "createdRow": function(row, data, dataIndex) {
+                    $('td', row).eq(0).addClass('id');
+                    $('td', row).eq(1).addClass('username');
+                    $('td', row).eq(2).addClass('item');
+                },
+               "lengthMenu": [ 5, 10, 25, 50, 100 ],
+               "pageLength": 5,
+                "columns": [
+                    { "data": "id" },
+                    { "data": "username" },
+                    { "data": "item"},
+                    { "data": "action"}
+                ],
+                "columnDefs": [
+                    {
+                        // "targets": [1,2], // Column index for contact
+                        // "orderable": false // Optional: Disable sorting for this column if necessary
+                    },
+                    {
+                      "targets": [],
+                      "visible": false
+                    }
+                ]
+            });
         });
 
         // Show the add form
@@ -330,62 +285,101 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         }
         </script>
         <hr>
-        <h2>Connect with me</h2>
-        <ul id="contact-container">
-        </ul>
-        <hr>
-        <h2>Talk with me about anything</h2>
-        <?= findTalk2MeFromUsername($userData,$_GET["username"])?>
-        <hr>
-        <h2>Contact QR Code</h2>
-        <figure><img id="qr-code" src="files/qr_code/<?= $_GET["username"]?>.png" alt='qr code'></img></figure>
       <?php else: ?>
-        <div id="lot-container">
         <h2>Library of Things</h2>
-        <table id="dataTable" class="display">
+        <table id="example" class="display" style="width:100%">
             <thead>
                 <tr>
-                    <?php foreach ($lotKeys as $lotKey): if($lotKey === "item"):?>
-                        <th><?= htmlspecialchars(ucfirst($lotKey)) ?></th>
-                        <th>User</th>
-                        <th>Contact</th>
-                    <?php endif;endforeach; ?>
+                    <th>Item</th>
+                    <th>Contact</th>
+                    <th>Distance</th>
                 </tr>
             </thead>
-            <tbody>
-                <?php foreach ($lotData as $row): ?>
-                    <tr>
-                        <?php foreach ($lotKeys as $lotKey): if($lotKey === "item"):?>
-                            <td class="<?=$lotKey?>" ><?= htmlspecialchars($row[$lotKey]) ?></td>
-                            <td><?= htmlspecialchars(findNameFromUsername($userData,$row["username"])); ?></td>
-                            <td>
-                              <?php
-                                foreach ($userKeys as $userKey):
-                                  if(isset($userData[findUserIndexByUsername($userData,$row["username"])][$userKey])):
-                                    if($userKey=="instagram"):
-                                      echo '<a href="https://www.instagram.com/'.$userData[findUserIndexByUsername($userData,$row["username"])]["instagram"].'"><img class="logo" src="files/logo/instagram.png"></a>';
-                                    elseif($userKey=="telegram"):
-                                      echo '<a href="https://t.me/'.$userData[findUserIndexByUsername($userData,$row["username"])]["telegram"].'"><img class="logo" src="files/logo/telegram.png"></a>';
-                                      elseif($userKey=="email"):
-                                        echo '<a href="mailto:'.$userData[findUserIndexByUsername($userData,$row["username"])]["email"].'"><img class="logo" src="files/logo/email.png"></a>';
-                                    endif;
-                                  endif;
-                                endforeach;
-                              ?>
-                            </td>
-                        <?php endif; endforeach; ?>
-                    </tr>
-                <?php endforeach; ?>
-            </tbody>
         </table>
-        </div>
+
+        <!-- jQuery -->
+        <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+        <!-- DataTables JS -->
+        <script src="https://cdn.datatables.net/1.11.5/js/jquery.dataTables.min.js"></script>
         <script>
-        $(document).ready(function() {
-            $('#dataTable').DataTable({
-              "columnDefs": [
-            { "orderable": false, "targets": 2 }]
-            });
-        });
+        getLocationByIP();
+        function getLocationByIP() {
+            // Fetch location data based on IP address
+            fetch('https://ipapi.co/json/')
+                .then(response => response.json())
+                .then(data => {
+                  const latitude = data.latitude;
+                  const longitude = data.longitude;
+                  console.log(latitude);
+                  console.log(longitude);
+                  $('#example').DataTable({
+                     "processing": true,
+                     "serverSide": true,
+                     "ajax": {
+                       "url":"server_processing.php?latitude="+latitude+"&longitude="+longitude
+                    },
+                    "lengthMenu": [ 5, 10, 25, 50, 100 ],
+                    "pageLength": 5,
+                     "columns": [
+                         { "data": "item" },
+                         { "data": "contact" },
+                         { "data": "distance"}
+                     ],
+                     "columnDefs": [
+                         {
+                             "targets": [1,2], // Column index for contact
+                             "orderable": false // Optional: Disable sorting for this column if necessary
+                         },
+                            {
+                              "targets": [2],
+                              "visible": false
+                            }
+                     ]
+                  });
+                })
+                .catch(error => {
+                    console.error('Error fetching IP location:', error);
+                    document.getElementById('output').innerText = 'Could not determine location.';
+                });
+        }
+
+        // getLocation();
+        function getLocation() {
+            if (navigator.geolocation) {
+                navigator.geolocation.getCurrentPosition(sendPosition);
+            } else {
+                alert("Geolocation is not supported by this browser.");
+            }
+        }
+        function sendPosition(position) {
+           // Extract latitude and longitude
+           const latitude = position.coords.latitude;
+           const longitude = position.coords.longitude;
+           $('#example').DataTable({
+               "processing": true,
+               "serverSide": true,
+               "ajax": {
+                 "url":"server_processing.php?latitude="+latitude+"&longitude="+longitude
+              },
+              "lengthMenu": [ 5, 10, 25, 50, 100 ],
+              "pageLength": 5,
+               "columns": [
+                   { "data": "item" },
+                   { "data": "contact" },
+                   { "data": "distance"}
+               ],
+               "columnDefs": [
+                   {
+                       "targets": [1,2], // Column index for contact
+                       "orderable": false // Optional: Disable sorting for this column if necessary
+                   },
+                   {
+                     "targets": [2],
+                     "visible": false
+                   }
+               ]
+           });
+        }
         </script>
       <?php endif; ?>
 
