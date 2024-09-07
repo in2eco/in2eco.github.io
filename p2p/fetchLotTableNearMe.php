@@ -28,25 +28,25 @@ $orderDir = isset($_GET['order'][0]['dir']) ? $_GET['order'][0]['dir'] : 'asc';
 $columns = ['item', 'contact']; // Changed to reflect contact column
 $orderBy = $columns[$orderColumnIndex] ?? 'item'; // Default to 'item'
 
-$username = $_GET["username"];
-// print_r($username);
+$current_latitude = $_GET["latitude"];
+$current_longitude = $_GET["longitude"];
 // Prepare the base query with join
 $baseQuery = "
-    SELECT id, username, item, CONCAT('<button onclick=editData({\"id\":',id,',\"username\":\"',username,'\",\"item\":\"',item,'\"})>Edit</button><button onclick=deleteData(',id,')>Delete</button>') as action from lot";
+    SELECT lot.item, CONCAT(users.name,'<br><br>',if(users.email is not null and users.email !='',CONCAT('<a href=\"mailto:',users.email,'\"><img class=\"logo\" src=\"files/logo/email.png\"</a>'),''),if(users.telegram is not null and users.telegram !='',CONCAT('<a href=\"https://t.me/',users.telegram,'\"><img class=\"logo\" src=\"files/logo/telegram.png\"</a>'),''),if(users.instagram is not null and users.instagram !='',CONCAT('<a href=\"https://instagram.com/',users.instagram,'\"><img class=\"logo\" src=\"files/logo/instagram.png\"</a>'),''),if(users.whatsapp is not null and users.whatsapp !='',CONCAT('<a href=\"https://wa.me/',users.whatsapp,'\"><img class=\"logo\" src=\"files/logo/whatsapp.png\"</a>'),'')) as contact, ROUND(6371 * ACOS(COS(RADIANS($current_latitude))* COS(RADIANS(users.latitude))* COS(RADIANS(users.longitude) - RADIANS($current_longitude))+ SIN(RADIANS($current_latitude))* SIN(RADIANS(users.latitude))),2) AS distance FROM lot LEFT JOIN users ON lot.username = users.username";
 
 // Search filter
-$searchQuery = "where username='".$username."'";
+$searchQuery = "";
 if (!empty($searchValue)) {
-    $searchQuery = " WHERE item LIKE :searchValue AND username='".$username."'";
+    $searchQuery = " WHERE lot.item LIKE :searchValue ";
 }
 
 // Get the total number of records without filtering
-$totalQuery = $pdo->prepare("SELECT COUNT(*) FROM lot where username='".$username."'");
+$totalQuery = $pdo->prepare("SELECT COUNT(*) FROM lot LEFT JOIN users ON lot.username = users.username");
 $totalQuery->execute();
 $totalRecords = $totalQuery->fetchColumn();
 
 // Get the total number of records with filtering
-$filteredQuery = $pdo->prepare("SELECT COUNT(*) FROM lot $searchQuery");
+$filteredQuery = $pdo->prepare("SELECT COUNT(*) FROM lot LEFT JOIN users ON lot.username = users.username $searchQuery");
 if (!empty($searchValue)) {
     $filteredQuery->bindValue(':searchValue', '%' . $searchValue . '%', PDO::PARAM_STR);
 }
@@ -54,7 +54,7 @@ $filteredQuery->execute();
 $totalFiltered = $filteredQuery->fetchColumn();
 
 // Fetch the records with sorting
-$dataQuery = $pdo->prepare("$baseQuery $searchQuery order by $orderBy $orderDir LIMIT :start, :length");
+$dataQuery = $pdo->prepare("$baseQuery $searchQuery ORDER BY distance asc, $orderBy $orderDir LIMIT :start, :length");
 if (!empty($searchValue)) {
     $dataQuery->bindValue(':searchValue', '%' . $searchValue . '%', PDO::PARAM_STR);
 }

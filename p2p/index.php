@@ -1,156 +1,4 @@
-<?php
-// Database connection parameters
-$servername = "localhost";   // MySQL server
-$username = "root";          // MySQL username
-$password = "abcd1234";              // MySQL password
-$dbname = "in2eco";   // Your database name
-
-// Create a connection to the MySQL database
-$conn = new mysqli($servername, $username, $password, $dbname);
-
-function findLotData()
-{
-  global $servername,$username,$password,$dbname,$conn;
-  $sql = "SELECT * FROM lot";  // Modify with your table and columns
-  $result = $conn->query($sql);
-
-  // Check if the query returns any results
-  if ($result->num_rows > 0) {
-      // Fetch all rows and save them in $userData
-      $lotData = $result->fetch_all(MYSQLI_ASSOC);
-  } else {
-      echo "No data found in the users table.";
-  }
-  return $lotData;
-}
-
-function findLotDataNearMe()
-{
-  global $servername,$username,$password,$dbname,$conn;
-  $latitude=$_GET["latitude"];
-  $longitude=$_GET["longitude"];
-  $proximity = 100;
-  $sql = "SELECT * FROM lot where username in (select username from users where (latitude-{$latitude}<={$proximity} AND latitude-{$latitude}>=-{$proximity}) AND (longitude-{$longitude}>=-{$proximity} AND longitude-{$longitude}<={$proximity}))";  // Modify with your table and columns
-
-
-  $result = $conn->query($sql);
-  // Check if the query returns any results
-  if ($result->num_rows > 0) {
-      // Fetch all rows and save them in $userData
-      $lotData = $result->fetch_all(MYSQLI_ASSOC);
-      return $lotData;
-  } else {
-      echo "No data found in the users table.";
-  }
-}
-
-function findLotDataWithUsername()
-{
-  global $servername,$username,$password,$dbname,$conn;
-  $sql = "SELECT * FROM lot where username='".$_GET["username"]."'";  // Modify with your table and columns
-  $result = $conn->query($sql);
-
-  // Check if the query returns any results
-  if ($result->num_rows > 0) {
-      // Fetch all rows and save them in $userData
-      $lotData = $result->fetch_all(MYSQLI_ASSOC);
-  } else {
-      echo "No data found in the users table.";
-  }
-  return $lotData;
-}
-
-function findKeysOfLotDatabase()
-{
-  global $servername,$username,$password,$dbname,$conn;
-  $sql = "DESCRIBE lot";
-  $result = $conn->query($sql);
-  if ($result->num_rows > 0) {
-      // Fetch each row and store the column name
-      while ($row = $result->fetch_assoc()) {
-          $lotKeys[] = $row['Field'];  // 'Field' column contains the name of each column
-      }
-  }
-  return $lotKeys;
-}
-
-function findUserIndexByUsername($searchUsername) {
-  global $servername,$username,$password,$dbname,$conn;
-  $sql = "select id from users where username='".$searchUsername."'";
-  $result = $conn->query($sql);
-  $result = $result->fetch_assoc();
-  return $result["id"];
-}
-
-function findNameFromUsername($searchUsername) {
-  global $servername,$username,$password,$dbname,$conn;
-  $sql = "select name from users where username='".$searchUsername."'";
-  $result = $conn->query($sql);
-  $result = $result->fetch_assoc();
-  return $result["name"];
-}
-
-function findContactFromUsername($searchUsername) {
-  global $servername,$username,$password,$dbname,$conn;
-  $sql = "select instagram, telegram, email, whatsapp from users where username='".$searchUsername."'";
-  $result = $conn->query($sql);
-  $result = $result->fetch_assoc();
-  return ["instagram" => $result["instagram"], "telegram" => $result["telegram"], "email" => $result["email"], "whatsapp" => $result["whatsapp"]];
-}
-
-function findLocationFromUsername($searchUsername) {
-  global $servername,$username,$password,$dbname,$conn;
-  $sql = "select latitude, longitude from users where username='".$searchUsername."'";
-  $result = $conn->query($sql);
-  $result = $result->fetch_assoc();
-  return ["latitude"=> $result['latitude'], "longitude" => $result['longitude']] ;
-}
-
-// Handle form submissions for adding, editing, and deleting data
-if ($_SERVER['REQUEST_METHOD'] === 'POST') {
-
-    if (isset($_POST['action'])) {
-        switch ($_POST['action']) {
-            case 'add':
-            global $servername,$username,$password,$dbname,$conn;
-            $sql = 'insert into lot (item, username) values ("'.$_POST["item"].'","'.$_GET["username"].'");';
-            $result = $conn->query($sql);
-            break;
-
-            case 'edit':
-              global $servername,$username,$password,$dbname,$conn;
-              $sql = 'update lot set item="'.$_POST["item"].'" where id="'.$_POST["id"].'"';
-              $result = $conn->query($sql);
-              break;
-
-            case 'delete':
-              global $servername,$username,$password,$dbname,$conn;
-              $sql = 'delete from lot where id="'.$_POST["id"].'"';
-              $result = $conn->query($sql);
-              break;
-
-            case 'updateLocation':
-              global $servername,$username,$password,$dbname,$conn;
-              $sql = 'update users set latitude='.$_POST["latitude"].', longitude='.$_POST["longitude"].' where username="'.$_GET["username"].'"';
-              $result = $conn->query($sql);
-              break;
-        }
-
-        // Save changes back to the JSON file
-        // file_put_contents($lotDataFile, json_encode(array_values($lotData), JSON_PRETTY_PRINT));
-
-        // Redirect to avoid form resubmission
-        header('Location: index.php?username='.$_GET["username"]);
-        exit();
-    }
-}
-
-
-// // Print the detected keys for debugging
-// echo "<pre>Detected Keys: ";
-// print_r($lotKeys);
-// echo "</pre>";
-?>
+<?php include 'database.php'?>
 
 <!DOCTYPE html>
 <html lang="en">
@@ -167,9 +15,40 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 </head>
 <body>
   <div class="dashboard">
-      <?php if(isset($_GET['username'])): ?>
+      <?php if(isset($_GET['username'])):
+        include 'user_login_validation.php';
+        ?>
         <h1><?= findNameFromUsername($_GET["username"])?></h1>
         <?php include 'contact.php';?>
+        <button onclick="showContactForm()">Update Contact</button>
+        <!-- FORM FOR UPDATING CONTACT -->
+        <div id="contact-form-container" style="display:none;">
+            <form id="contact-form" method="POST">
+                <input type="hidden" name="contact-action" id="contact-action">
+                <label>Instagram<input id="form-instagram-contact" type="text" name="instagram"></label><br>
+                <label>Telegram<input id="form-telegram-contact" type="text" name="telegram"></label><br>
+                <label>Email<input id="form-email-contact" type="text" name="email"></label><br>
+                <label>Whatsapp<input id="form-whatsapp-contact" type="text" name="whatsapp"></label><br>
+                <button type="submit">Save</button>
+                <button type="button" onclick="hideContactForm()">Cancel</button>
+            </form>
+        </div>
+
+        <script>
+          function showContactForm(){
+            $('#contact-form-container').show();
+            <?php $contact = findContactFromUsername($_GET["username"]);?>
+            $('#form-instagram-contact').val("<?=$contact["instagram"]?>");
+            $('#form-email-contact').val("<?=$contact["email"]?>");
+            $('#form-telegram-contact').val("<?=$contact["telegram"]?>");
+            $('#form-whatsapp-contact').val("<?=$contact["whatsapp"]?>");
+            $('#contact-action').val("update");
+          }
+          function hideContactForm()
+          {
+            $('#contact-form-container').hide();
+          }
+        </script>
         <hr>
         <?php include 'location.php'?>
         <hr>
@@ -181,17 +60,18 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                     <?php
                       $lotKeys = findKeysOfLotDatabase();
                       foreach ($lotKeys as $lotKey): ?>
-                      <th class="<?=$lotKey?>" ><?= htmlspecialchars(ucfirst($lotKey)) ?></th>
+                      <th class="<?=$lotKey?>" ><?= (ucfirst($lotKey)) ?></th>
                     <?php endforeach; ?>
                     <th>Actions</th>
                 </tr>
             </thead>
         </table>
 
+
         <button onclick="showAddForm()">Add New Item</button>
         </div>
 
-        <!-- Form Modal -->
+        <!-- FORM FOR ADDING, EDITING LOT ITEM -->
         <div id="formModal" style="display:none;">
             <form id="dataForm" method="POST">
                 <input type="hidden" name="id" id="id">
@@ -209,9 +89,13 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             </form>
         </div>
 
+        <form action="logout.php" method="POST">
+          <button type="submit" class="logout-button">Logout</button>
+        </form>
+
         <script>
         $(document).ready(function() {
-            var url = "fetchUserData.php?username=" + "<?=$_GET['username']?>";
+            var url = "fetchLotUser.php?username=" + "<?=$_GET['username']?>";
             $('#lotTable').DataTable({
                 "processing": true,
                 "serverSide": true,
@@ -243,8 +127,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                 ]
             });
         });
-
-        // Show the add form
+        // SHOW THE ADD LOT ITEM FORM
         function showAddForm() {
             $('#action').val('add');
             $('#id').val('');
@@ -256,7 +139,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             $('#formModal').show();
         }
 
-        // Show the edit form with pre-filled data
+        // SHOW THE EDIT LOT ITEM FORM
         function editData(row) {
             $('#action').val('edit');
             $('#id').val(row.id);
@@ -268,7 +151,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             $('#formModal').show();
         }
 
-        // Handle delete action
+        // DELETE LOT ITEM
         function deleteData(id) {
             if (confirm('Are you sure you want to delete this entry?')) {
                 $('<form>', {
@@ -278,20 +161,20 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             }
         }
 
-        // Hide the form
+        // HIDE FORM
         function hideForm() {
             $('#formModal').hide();
         }
         </script>
         <hr>
-      <?php else: ?>
+      <?php else:?>
         <h2>Library of Things</h2>
         <table id="example" class="display" style="width:100%">
             <thead>
                 <tr>
                     <th>Item</th>
                     <th>Contact</th>
-                    <th>Distance</th>
+                    <th>Distance<sup>1</sup> (km)</th>
                 </tr>
             </thead>
         </table>
@@ -309,13 +192,13 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                 .then(data => {
                   const latitude = data.latitude;
                   const longitude = data.longitude;
-                  console.log(latitude);
-                  console.log(longitude);
+                  // console.log(latitude);
+                  // console.log(longitude);
                   $('#example').DataTable({
                      "processing": true,
                      "serverSide": true,
                      "ajax": {
-                       "url":"server_processing.php?latitude="+latitude+"&longitude="+longitude
+                       "url":"fetchLotTableNearMe.php?latitude="+latitude+"&longitude="+longitude
                     },
                     "lengthMenu": [ 5, 10, 25, 50, 100 ],
                     "pageLength": 5,
@@ -330,7 +213,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                              "orderable": false // Optional: Disable sorting for this column if necessary
                          },
                             {
-                              "targets": [2],
+                              "targets": [],
                               "visible": false
                             }
                      ]
@@ -358,7 +241,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                "processing": true,
                "serverSide": true,
                "ajax": {
-                 "url":"server_processing.php?latitude="+latitude+"&longitude="+longitude
+                 "url":"fetchLotTableNearMe.php?latitude="+latitude+"&longitude="+longitude
               },
               "lengthMenu": [ 5, 10, 25, 50, 100 ],
               "pageLength": 5,
@@ -373,16 +256,40 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                        "orderable": false // Optional: Disable sorting for this column if necessary
                    },
                    {
-                     "targets": [2],
+                     "targets": [],
                      "visible": false
                    }
                ]
            });
         }
         </script>
+        <div id="user-access-container">
+          <div class="login-container">
+            <h2>Login</h2>
+            <form action="login.php" method="POST">
+              <input type="text" name="username" placeholder="Enter Username" required>
+              <input type="password" name="password" placeholder="Enter Password" required>
+              <button type="submit">Login</button>
+            </form>
+          </div>
+          <div class="signup-container">
+            <h2>Sign Up</h2>
+            <form action="signup.php" method="POST">
+                <input type="text" name="username" placeholder="Username" required>
+                <input type="text" name="name" placeholder="Name" required>
+                <input type="password" name="password" placeholder="Password" required>
+                <button type="submit">Sign Up</button>
+            </form>
+          </div>
+        </div>
       <?php endif; ?>
 
 
+<!-- <sup>1</sup> Haversine distance between two coordinates -->
+<!-- <strong>Reference/Credits:</strong>
+<ul>
 
+<li>Table was constructed using <a href="https://datatables.net/">Datatable</a></li>
+</ul> -->
 </body>
 </html>

@@ -2,7 +2,8 @@
 <div id="map"></div>
 <button onclick="updateUserLocation()">Update Location</button>
 <script>
-  <?php $location = findLocationFromUsername($_GET["username"]);?>
+  <?php $location = findLocationFromUsername($_GET["username"]);
+  if(isset($location['latitude']) && isset($location['longitude'])): ?>
   var map = L.map('map').setView([<?= $location["latitude"]?>,<?= $location["longitude"]?>], 16); // Example coordinates: London
 
   // Add the OSM tile layer to the map
@@ -17,6 +18,7 @@
 
   // Create and add the marker to the map
   var marker = L.marker([latitude, longitude]).addTo(map);
+  <?php endif;?>
 
   // Optional: Add a popup to the marker
   // marker.bindPopup("Leh, Ladakh").openPopup();
