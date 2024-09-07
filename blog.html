@@ -532,6 +532,14 @@
           drawNetwork('multi-day-tour-1', nodes, edges);
 
           /********* END: DRAW NETWORK *************/
+
+          // LAZY LOADING OF IMAGE
+          document.querySelectorAll('img').forEach((img) => {
+            // Check if the image doesn't already have a loading attribute
+            if (!img.hasAttribute('loading')) {
+              img.setAttribute('loading', 'lazy');
+            }
+          });
         })
         .catch(error => {
             // Log the error to the console

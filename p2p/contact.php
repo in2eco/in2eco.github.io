@@ -1,4 +1,3 @@
-<h2>Connect with me</h2>
 <ul id="contact-container">
   <?php $contacts=findContactFromUsername($_GET["username"]);
     foreach ($contacts as $key=>$contact):

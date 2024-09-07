@@ -169,7 +169,6 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
   <div class="dashboard">
       <?php if(isset($_GET['username'])): ?>
         <h1><?= findNameFromUsername($_GET["username"])?></h1>
-        <hr>
         <?php include 'contact.php';?>
         <hr>
         <?php include 'location.php'?>
