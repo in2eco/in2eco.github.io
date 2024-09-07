@@ -70,7 +70,7 @@ button
 {
   content: 'Delete';
 }
-.signup-container, .login-container {
+#signup-container, #login-container {
     margin: 40px auto auto auto;
     max-width: 250px;
     background: #fff;
@@ -78,18 +78,19 @@ button
     border-radius: 8px;
     box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
 }
-.signup-container h2, .login-container h2 {
+#signup-container h2, #login-container h2 {
     margin-bottom: 20px;
     text-align: center;
 }
-.signup-container input, .login-container input {
+#signup-container input, #login-container input {
+    font-size: 1.05em;
     width: 90%;
     padding: 10px 5%;
     margin: 10px 0;
     border: 1px solid #ccc;
     border-radius: 4px;
 }
-.signup-container button, .login-container button {
+#signup-container button, #login-container button {
     width: 100%;
     padding: 10px;
     background-color: #4CAF50;
@@ -98,7 +99,7 @@ button
     border-radius: 4px;
     cursor: pointer;
 }
-.signup-container button:hover, .login-container button:hover {
+#signup-container button:hover, #login-container button:hover {
     background-color: #45a049;
 }
 #user-access-container
