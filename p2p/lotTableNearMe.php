@@ -1,4 +1,5 @@
-<h2>Library of Things</h2>
+<div class="lot-container">
+<h1>Library of Things</h1>
 <table id="example" class="display" style="width:100%">
     <thead>
         <tr>
@@ -8,6 +9,7 @@
         </tr>
     </thead>
 </table>
+</div>
 
 <!-- jQuery -->
 <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
@@ -40,7 +42,7 @@ function getLocationByIP() {
              ],
              "columnDefs": [
                  {
-                     "targets": [1,2], // Column index for contact
+                     "targets": [2], // Column index for contact
                      "orderable": false // Optional: Disable sorting for this column if necessary
                  },
                     {
@@ -82,7 +84,7 @@ function sendPosition(position) {
        ],
        "columnDefs": [
            {
-               "targets": [1,2], // Column index for contact
+               "targets": [2], // Column index for contact
                "orderable": false // Optional: Disable sorting for this column if necessary
            },
            {
@@ -112,3 +114,5 @@ function sendPosition(position) {
     </form>
   </div>
 </div>
+<br>
+<sup>1</sup>Haversine distance between two GPS coordinates.

@@ -5,6 +5,7 @@ let myDiv = document.getElementById("latest-trips");
 
 // Creating an array of dictionaries (objects)
 let data = [
+    { "month": 9, "year": 2024, "place": "Leh, Ladakh", "description": "Leh &rarr; Zanskar Valley &rarr; Tso Pangong &rarr; Tso Moriri", "image-source": "images/travel/leh/shanti_stupa_8.jpg", "image-caption": "View from Tsemo Maitrey temple", "link": "blog.html?a=leh"},
     { "month": 8, "year": 2024, "place": "Nepal", "description": "Dang &rarr; Lumbini", "image-source": "images/travel/nepal/tulsipur.jpg", "image-caption": "View point near Tulsipur", "link": "blog.html?a=nepal"},
     { "month": 5, "year": 2024, "place": "National Parks and National Monuments, USA", "description": "Death valley &rarr; Zion &rarr; Bryce canyon &rarr; Grand staircase &rarr; Glen canyon &rarr; Horseshoe bend &rarr; Grand canyon &rarr; Yosemite &rarr; Sequoia &rarr; Muir woods &rarr; Yellowstone &rarr; Grand Teton &rarr; Arches &rarr; Canyonlands", "image-source": "images/travel/usa/bryce-canyon.jpg", "image-caption": "Bryce Canyon", "link": "blog.html?a=national_parks"},
     { "month": 2, "year": 2024, "place": "North America", "description": "Portland, Maine &rarr; Quebec city &rarr; Montreal", "image-source": "images/travel/canada/quebec-1.jpg", "image-caption": "Quebec city", "link": "#"},

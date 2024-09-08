@@ -131,12 +131,6 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
               $query->bindParam(':longitude',$_POST["longitude"],PDO::PARAM_STR);
               $query->execute();
               break;
-
-            case 'updateContact':
-              global $servername,$username,$password,$dbname,$conn;
-              $sql = 'update users set email="'.$_POST["email"].'", instagram="'.$_POST["instagram"].'", telegram="'.$_POST['telegram'].'", whatsapp="'.$_POST["whatsapp"].'" where username="'.$_GET["username"].'"';
-              $result = $conn->query($sql);
-              break;
         }
     }
     header('Location: index.php?username='.$_GET["username"]);

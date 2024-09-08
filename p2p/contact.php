@@ -26,7 +26,6 @@
         <button type="button" onclick="hideContactForm()">Cancel</button>
     </form>
 </div>
-<hr>
 <script>
   function showContactForm(){
     $('#contact-form-container').show();

@@ -1,34 +1,28 @@
-<h1><?= findNameFromUsername($_GET["username"])?></h1>
-<form id="logout-form" action="server/logout.php" method="POST">
-  <button type="submit" class="logout-button">Logout</button>
-</form>
-<br>
-<?php include 'contact.php';?>
-
-<?php include 'location.php'?>
-<hr>
-<div id="lot-container">
-<h2>Library of Things</h2>
-<table id="lotTable" class="display">
-    <thead>
-        <tr>
-            <?php
-              $lotKeys = findKeysOfLotDatabase();
-              foreach ($lotKeys as $lotKey): ?>
-              <th class="<?=$lotKey?>" ><?= (ucfirst($lotKey)) ?></th>
-            <?php endforeach; ?>
-            <th></th>
-        </tr>
-    </thead>
-</table>
+<div id="profile-container">
+  <div id="name-and-contact">
+    <h2><?= findNameFromUsername($_GET["username"])?></h2>
+    <form id="logout-form" action="server/logout.php" method="POST">
+    <button type="submit" class="logout-button">Logout</button>
+    </form>
+    <br>
+    <?php include 'contact.php';?>
+  </div>
+  <div id="location">
+    <?php include 'location.php'?>
+  </div>
+</div>
+<div class="lot-container">
+<h2>My Library of Things</h2>
+<button id="add-new-lot-item-button" onclick="showAddForm()">Add New Item</button>
 <!-- FORM FOR ADDING, EDITING LOT ITEM -->
 <div id="formModal" style="display:none;">
     <form id="dataForm" method="POST">
         <input type="hidden" name="id" id="id">
         <input type="hidden" name="action" id="action">
-        <?php foreach ($lotKeys as $lotKey): ?>
+        <?php $lotKeys = findKeysOfLotDatabase();
+          foreach ($lotKeys as $lotKey): ?>
             <?php if ($lotKey !== 'id' && $lotKey !== 'username'): ?>
-                <label><?= ucfirst($lotKey) ?>: <input type="text" name="<?= $lotKey ?>" id="<?= $lotKey ?>" required></label>
+                <label><?= ucfirst($lotKey) ?> <input type="text" name="<?= $lotKey ?>" id="<?= $lotKey ?>" required></label>
             <?php endif; ?>
             <?php if ($lotKey === 'username'): ?>
                 <input type="hidden" name="<?= $lotKey ?>" id="<?= $lotKey ?>" value="<?= $_GET['username']?>">
@@ -40,8 +34,17 @@
     </form>
 </div>
 
-
-<button onclick="showAddForm()">Add New Item</button>
+<table id="lotTable" class="display">
+    <thead>
+        <tr>
+            <?php
+              foreach ($lotKeys as $lotKey): ?>
+              <th class="<?=$lotKey?>" ><?= (ucfirst($lotKey)) ?></th>
+            <?php endforeach; ?>
+            <th></th>
+        </tr>
+    </thead>
+</table>
 </div>
 
 <script>
@@ -118,4 +121,3 @@ function hideForm() {
     $('#formModal').hide();
 }
 </script>
-<hr>
