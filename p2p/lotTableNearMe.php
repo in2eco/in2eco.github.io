@@ -15,6 +15,7 @@
 <script src="https://cdn.datatables.net/1.11.5/js/jquery.dataTables.min.js"></script>
 <script>
 getLocationByIP();
+// getLocation();
 function getLocationByIP() {
     // Fetch location data based on IP address
     fetch('https://ipapi.co/json/')
@@ -28,7 +29,7 @@ function getLocationByIP() {
              "processing": true,
              "serverSide": true,
              "ajax": {
-               "url":"fetchLotTableNearMe.php?latitude="+latitude+"&longitude="+longitude
+               "url":"server/fetchLotTableNearMe.php?latitude="+latitude+"&longitude="+longitude
             },
             "lengthMenu": [ 5, 10, 25, 50, 100 ],
             "pageLength": 5,
@@ -47,7 +48,7 @@ function getLocationByIP() {
                       "visible": false
                     }
              ]
-          });          
+          });
         })
         .catch(error => {
             console.error('Error fetching IP location:', error);
@@ -55,7 +56,6 @@ function getLocationByIP() {
         });
 }
 
-// getLocation();
 function getLocation() {
     if (navigator.geolocation) {
         navigator.geolocation.getCurrentPosition(sendPosition);
@@ -71,7 +71,7 @@ function sendPosition(position) {
        "processing": true,
        "serverSide": true,
        "ajax": {
-         "url":"fetchLotTableNearMe.php?latitude="+latitude+"&longitude="+longitude
+         "url":"server/fetchLotTableNearMe.php?latitude="+latitude+"&longitude="+longitude
       },
       "lengthMenu": [ 5, 10, 25, 50, 100 ],
       "pageLength": 5,
@@ -96,7 +96,7 @@ function sendPosition(position) {
 <div id="user-access-container">
   <div id="login-container">
     <h2>Login</h2>
-    <form action="login.php" method="POST">
+    <form action="server/login.php" method="POST">
       <input type="text" name="username" placeholder="Enter Username" required>
       <input type="password" name="password" placeholder="Enter Password" required>
       <button type="submit">Login</button>
@@ -104,7 +104,7 @@ function sendPosition(position) {
   </div>
   <div id="signup-container">
     <h2>Sign Up</h2>
-    <form action="signup.php" method="POST">
+    <form action="server/signup.php" method="POST">
         <input type="text" name="username" placeholder="Username" required>
         <input type="text" name="name" placeholder="Name" required>
         <input type="password" name="password" placeholder="Password" required>

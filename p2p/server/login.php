@@ -41,7 +41,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         $_SESSION['last_activity'] = time();
 
         // Redirect to a protected page (e.g., dashboard)
-        header("Location: index.php?username=".$_SESSION['username']);
+        header("Location: ../index.php?username=".$_SESSION['username']);
         exit();
     } else {
         echo "Invalid username or password.";

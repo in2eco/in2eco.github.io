@@ -1,4 +1,4 @@
-<h2>Location</h2>
+<!-- <h2>Location</h2> -->
 <div id="map"></div>
 <button onclick="updateUserLocation()">Update Location</button>
 <script>

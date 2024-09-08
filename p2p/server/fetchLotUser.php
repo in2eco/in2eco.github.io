@@ -31,8 +31,8 @@ $orderBy = $columns[$orderColumnIndex] ?? 'item'; // Default to 'item'
 $username = $_GET["username"];
 // print_r($username);
 // Prepare the base query with join
-$baseQuery = "
-    SELECT id, username, item, CONCAT('<button onclick=editData({\"id\":',id,',\"username\":\"',username,'\",\"item\":\"',item,'\"})>Edit</button><button onclick=deleteData(',id,')>Delete</button>') as action from lot";
+// $baseQuery = "SELECT id, username, item, CONCAT('<button onclick=editData({\"id\"\:',id,',\"username\":\"',username,'\",\"item\":\"',item,'\"})>Edit</button><button onclick=deleteData(',id,')>Delete</button>') as action from lot";
+$baseQuery = "SELECT id, username, item, CONCAT('<button onclick=deleteData(',id,')>Delete</button>') as action from lot";
 
 // Search filter
 $searchQuery = "where username='".$username."'";

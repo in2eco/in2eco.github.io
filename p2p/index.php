@@ -1,4 +1,4 @@
-<?php include 'database.php'?>
+<?php include 'server/database.php'?>
 
 <!DOCTYPE html>
 <html lang="en">
@@ -17,7 +17,7 @@
   <div class="dashboard">
       <?php
         if(isset($_GET['username'])):
-          include 'user_login_validation.php';
+          include 'server/user_login_validation.php';
           include 'lotTableUser.php';
         else:
           include 'lotTableNearMe.php';

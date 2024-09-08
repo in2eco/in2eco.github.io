@@ -1,35 +1,10 @@
 <h1><?= findNameFromUsername($_GET["username"])?></h1>
+<form id="logout-form" action="server/logout.php" method="POST">
+  <button type="submit" class="logout-button">Logout</button>
+</form>
+<br>
 <?php include 'contact.php';?>
-<button onclick="showContactForm()">Update Contact</button>
-<!-- FORM FOR UPDATING CONTACT -->
-<div id="contact-form-container" style="display:none;">
-    <form id="contact-form" method="POST">
-        <input type="hidden" name="contact-action" id="contact-action">
-        <label>Instagram<input id="form-instagram-contact" type="text" name="instagram"></label><br>
-        <label>Telegram<input id="form-telegram-contact" type="text" name="telegram"></label><br>
-        <label>Email<input id="form-email-contact" type="text" name="email"></label><br>
-        <label>Whatsapp<input id="form-whatsapp-contact" type="text" name="whatsapp"></label><br>
-        <button type="submit">Save</button>
-        <button type="button" onclick="hideContactForm()">Cancel</button>
-    </form>
-</div>
 
-<script>
-  function showContactForm(){
-    $('#contact-form-container').show();
-    <?php $contact = findContactFromUsername($_GET["username"]);?>
-    $('#form-instagram-contact').val("<?=$contact["instagram"]?>");
-    $('#form-email-contact').val("<?=$contact["email"]?>");
-    $('#form-telegram-contact').val("<?=$contact["telegram"]?>");
-    $('#form-whatsapp-contact').val("<?=$contact["whatsapp"]?>");
-    $('#contact-action').val("update");
-  }
-  function hideContactForm()
-  {
-    $('#contact-form-container').hide();
-  }
-</script>
-<hr>
 <?php include 'location.php'?>
 <hr>
 <div id="lot-container">
@@ -42,15 +17,10 @@
               foreach ($lotKeys as $lotKey): ?>
               <th class="<?=$lotKey?>" ><?= (ucfirst($lotKey)) ?></th>
             <?php endforeach; ?>
-            <th>Actions</th>
+            <th></th>
         </tr>
     </thead>
 </table>
-
-
-<button onclick="showAddForm()">Add New Item</button>
-</div>
-
 <!-- FORM FOR ADDING, EDITING LOT ITEM -->
 <div id="formModal" style="display:none;">
     <form id="dataForm" method="POST">
@@ -64,18 +34,19 @@
                 <input type="hidden" name="<?= $lotKey ?>" id="<?= $lotKey ?>" value="<?= $_GET['username']?>">
             <?php endif; ?>
         <?php endforeach; ?>
+        <br>
         <button type="submit">Save</button>
         <button type="button" onclick="hideForm()">Cancel</button>
     </form>
 </div>
 
-<form action="logout.php" method="POST">
-  <button type="submit" class="logout-button">Logout</button>
-</form>
+
+<button onclick="showAddForm()">Add New Item</button>
+</div>
 
 <script>
 $(document).ready(function() {
-    var url = "fetchLotUser.php?username=" + "<?=$_GET['username']?>";
+    var url = "server/fetchLotUser.php?username=" + "<?=$_GET['username']?>";
     $('#lotTable').DataTable({
         "processing": true,
         "serverSide": true,
@@ -97,8 +68,8 @@ $(document).ready(function() {
         ],
         "columnDefs": [
             {
-                // "targets": [1,2], // Column index for contact
-                // "orderable": false // Optional: Disable sorting for this column if necessary
+                "targets": [0,1,3], // Column index for contact
+                "orderable": false // Optional: Disable sorting for this column if necessary
             },
             {
               "targets": [],
@@ -123,6 +94,7 @@ function showAddForm() {
 function editData(row) {
     $('#action').val('edit');
     $('#id').val(row.id);
+    // console.log(row.id);
     <?php foreach ($lotKeys as $lotKey): ?>
         <?php if ($lotKey !== 'id'): ?>
             $('#<?= $lotKey ?>').val(row['<?= $lotKey ?>']);

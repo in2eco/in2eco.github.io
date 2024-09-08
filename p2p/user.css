@@ -16,12 +16,12 @@ body {
 }
 #map {
     margin: auto;
-    height: 300px; /* Set the height of the map */
+    height: 250px; /* Set the height of the map */
     /* max-width: 300px; */
 }
 .logo
 {
-  max-width: 30px;
+  max-width: 35px;
   margin: 0 5px;
 }
 #contact-container
@@ -30,10 +30,28 @@ body {
   padding: 0;
   list-style-type: none;
 }
+h1
+{
+  margin: 5px;
+}
+h1, #logout-form, #update-contact-button, #contact-container
+{
+  display: inline-flex;
+}
+#logout-form,
+{
+  position: relative;
+  bottom: 5px;
+}
+#update-contact-button
+{
+  position: relative;
+  bottom: 12px;
+}
 li
 {
   display: inline-block;
-  margin: 0 20px;
+  /* margin: 10px 10px; */
 }
 .qr-code{
   max-width:300px;
@@ -46,7 +64,7 @@ li
 button
 {
   padding: 5px;
-  margin: 5px;
+  margin: 10px 5px;
   border-radius: 4px;
 }
 .id, .username
@@ -78,29 +96,30 @@ button
     border-radius: 8px;
     box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
 }
-#signup-container h2, #login-container h2 {
+h2{
     margin-bottom: 20px;
     text-align: center;
 }
-#signup-container input, #login-container input {
+input
+{
     font-size: 1.05em;
-    width: 90%;
-    padding: 10px 5%;
+    width: auto;
+    padding: 10px 4px;
     margin: 10px 0;
     border: 1px solid #ccc;
     border-radius: 4px;
 }
-#signup-container button, #login-container button {
-    width: 100%;
+button{
+    width: auto;
     padding: 10px;
-    background-color: #4CAF50;
+    background-color: black;
     border: none;
     color: white;
     border-radius: 4px;
     cursor: pointer;
 }
-#signup-container button:hover, #login-container button:hover {
-    background-color: #45a049;
+button:hover{
+    background-color: #444;
 }
 #user-access-container
 {

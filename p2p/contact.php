@@ -13,3 +13,32 @@
     endforeach;
   ?>
 </ul>
+<button id="update-contact-button" onclick="showContactForm()">Update Contact</button>
+<!-- FORM FOR UPDATING CONTACT -->
+<div id="contact-form-container" style="display:none;">
+    <form id="contact-form" method="POST">
+        <input type="hidden" name="contact-action" id="contact-action">
+        <label>Instagram <input id="form-instagram-contact" type="text" name="instagram"></label><br>
+        <label>Telegram <input id="form-telegram-contact" type="text" name="telegram"></label><br>
+        <label>Email <input id="form-email-contact" type="text" name="email"></label><br>
+        <label>Whatsapp <input id="form-whatsapp-contact" type="text" name="whatsapp"></label><br>
+        <button type="submit">Save</button>
+        <button type="button" onclick="hideContactForm()">Cancel</button>
+    </form>
+</div>
+<hr>
+<script>
+  function showContactForm(){
+    $('#contact-form-container').show();
+    <?php $contact = findContactFromUsername($_GET["username"]);?>
+    $('#form-instagram-contact').val("<?=$contact["instagram"]?>");
+    $('#form-email-contact').val("<?=$contact["email"]?>");
+    $('#form-telegram-contact').val("<?=$contact["telegram"]?>");
+    $('#form-whatsapp-contact').val("<?=$contact["whatsapp"]?>");
+    $('#contact-action').val("update");
+  }
+  function hideContactForm()
+  {
+    $('#contact-form-container').hide();
+  }
+</script>
