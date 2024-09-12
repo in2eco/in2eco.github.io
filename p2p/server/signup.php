@@ -1,8 +1,8 @@
 <?php
 // Database connection parameters
 $servername = 'localhost';
-$username = 'root';
-$password = 'abcd1234';
+$username = 'anuragg';
+$password = 'P@ssw0rd123';
 $dbname = 'in2eco';
 
 // Create a new PDO instance

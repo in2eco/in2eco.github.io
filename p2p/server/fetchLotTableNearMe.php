@@ -2,8 +2,8 @@
 // Include the database connection
 $host = 'localhost';       // Database host, usually localhost
 $db = 'in2eco';     // Name of your database
-$user = 'root';   // Database username
-$pass = 'abcd1234';   // Database password
+$user = 'anuragg';   // Database username
+$pass = 'P@ssw0rd123';   // Database password
 
 try {
     // Create a new PDO instance and set the error mode to exception
@@ -35,9 +35,9 @@ $baseQuery = "
     SELECT lot.item, CONCAT(users.name,'<br><br>',if(users.email is not null and users.email !='',CONCAT('<a href=\"mailto:',users.email,'\"><img class=\"logo\" src=\"files/logo/email.png\"</a>'),''),if(users.telegram is not null and users.telegram !='',CONCAT('<a href=\"https://t.me/',users.telegram,'\"><img class=\"logo\" src=\"files/logo/telegram.png\"</a>'),''),if(users.instagram is not null and users.instagram !='',CONCAT('<a href=\"https://instagram.com/',users.instagram,'\"><img class=\"logo\" src=\"files/logo/instagram.png\"</a>'),''),if(users.whatsapp is not null and users.whatsapp !='',CONCAT('<a href=\"https://wa.me/',users.whatsapp,'\"><img class=\"logo\" src=\"files/logo/whatsapp.png\"</a>'),'')) as contact, ROUND(6371 * ACOS(COS(RADIANS($current_latitude))* COS(RADIANS(users.latitude))* COS(RADIANS(users.longitude) - RADIANS($current_longitude))+ SIN(RADIANS($current_latitude))* SIN(RADIANS(users.latitude))),2) AS distance FROM lot LEFT JOIN users ON lot.username = users.username";
 
 // Search filter
-$searchQuery = "";
+$searchQuery = "WHERE users.latitude IS NOT NULL AND users.longitude IS NOT NULL AND ((users.instagram IS NOT NULL AND users.instagram!='') OR (users.whatsapp IS NOT NULL AND users.whatsapp!='') OR (users.telegram IS NOT NULL AND users.telegram!='') OR (users.email IS NOT NULL AND users.email!=''))";
 if (!empty($searchValue)) {
-    $searchQuery = " WHERE lot.item LIKE :searchValue ";
+    $searchQuery = " WHERE lot.item LIKE :searchValue AND users.latitude IS NOT NULL AND users.longitude IS NOT NULL AND ((users.instagram IS NOT NULL AND users.instagram!='') OR (users.whatsapp IS NOT NULL AND users.whatsapp!='') OR (users.telegram IS NOT NULL AND users.telegram!='') OR (users.email IS NOT NULL AND users.email!=''))";
 }
 
 // Get the total number of records without filtering

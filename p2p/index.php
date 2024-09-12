@@ -1,5 +1,6 @@
-<?php include 'server/database.php'?>
-
+<?php
+include 'server/database.php'
+?>
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -18,10 +19,11 @@
       <?php
         if(isset($_GET['username'])):
           include 'server/user_login_validation.php';
-          include 'lotTableUser.php';
+          include 'supplementary/lotTableUser.php';
         else:
-          include 'lotTableNearMe.php';
-        endif;?>
+          include 'supplementary/lotTableNearMe.php';
+        endif;
+        ?>
 
 
 <!-- <sup>1</sup> Haversine distance between two coordinates -->

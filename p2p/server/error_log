@@ -1,0 +1,5 @@
+[12-Sep-2024 09:12:09 UTC] PHP Fatal error:  Uncaught PDOException: SQLSTATE[42000]: Syntax error or access violation: 1064 You have an error in your SQL syntax; check the manual that corresponds to your MySQL server version for the right syntax to use near ', users.longitude IS NOT NULL' at line 1 in /home/inecocom/public_html/p2p/server/fetchLotTableNearMe.php:53
+Stack trace:
+#0 /home/inecocom/public_html/p2p/server/fetchLotTableNearMe.php(53): PDOStatement->execute()
+#1 {main}
+  thrown in /home/inecocom/public_html/p2p/server/fetchLotTableNearMe.php on line 53

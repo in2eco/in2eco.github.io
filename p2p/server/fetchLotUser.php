@@ -2,8 +2,8 @@
 // Include the database connection
 $host = 'localhost';       // Database host, usually localhost
 $db = 'in2eco';     // Name of your database
-$user = 'root';   // Database username
-$pass = 'abcd1234';   // Database password
+$user = 'anuragg';   // Database username
+$pass = 'P@ssw0rd123';   // Database password
 
 try {
     // Create a new PDO instance and set the error mode to exception

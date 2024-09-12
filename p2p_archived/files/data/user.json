@@ -1,0 +1,23 @@
+[
+    {
+        "id": 1,
+        "username": "anuragg",
+        "name": "Anurag Gupta",
+        "latitude": 34.1703347,
+        "longitude": 77.5836898,
+        "telegram": "anuragg_in",
+        "instagram": "anuraggin",
+        "linkedin": "anuragg-in",
+        "email": "anurag.luvs.india@gmail.com",
+        "status": "Traveling in Leh, Ladakh, India from Sep 1 to Sep 30",
+        "talk2me": "Saturday 4 pm - 5 pm (IST). Meeting link: https:\/\/meet.google.com\/aid-dwtz-zsk"
+    },
+    {
+        "id": 2,
+        "username": "ashutoshg",
+        "name": "Ashutosh Gupta",
+        "telegram": "ashutoshg",
+        "instagram": "ashutoshg",
+        "linkedin": "ashutoshg"
+    }
+]

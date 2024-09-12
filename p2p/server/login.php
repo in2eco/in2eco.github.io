@@ -3,8 +3,8 @@ session_start(); // Start the session
 
 // Database connection parameters
 $servername = 'localhost';
-$username = 'root';
-$password = 'abcd1234';
+$username = 'anuragg';
+$password = 'P@ssw0rd123';
 $dbname = 'in2eco';
 
 // Create a new PDO instance
@@ -39,7 +39,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         // Store user information in session
         $_SESSION['username'] = $inputUsername;
         $_SESSION['last_activity'] = time();
-
+        // echo $_SESSION['username'];
         // Redirect to a protected page (e.g., dashboard)
         header("Location: ../index.php?username=".$_SESSION['username']);
         exit();
